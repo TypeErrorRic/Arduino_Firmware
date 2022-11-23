@@ -3,3 +3,5 @@
 test/
 Doxyfile
 platformio.ini
+#Ignorar los readme:
+lib/README
