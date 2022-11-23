@@ -1,6 +1,8 @@
 //Librerías:
 #include <Arduino.h>
 #include <Regresion_Cuadratica.h> 
+#include <Celda_Carga.h>
+#include <Operaciones.h>
 //Funciones de testeo:
 #include "..\include\Testeo.h"
 
