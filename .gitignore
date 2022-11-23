@@ -4,4 +4,8 @@ test/
 Doxyfile
 platformio.ini
 #Ignorar los readme:
-lib/README
+lib/**/*.md 
+!Aviso.md
+
+include/*.md
+!Aviso.md
