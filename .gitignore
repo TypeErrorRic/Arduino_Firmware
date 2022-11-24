@@ -3,6 +3,7 @@
 .vscode/
 test/
 Doxyfile
+platformio.ini
 
 #Ignorar los Avisos de lib que terminen en .md:
 lib/**/*.md 
