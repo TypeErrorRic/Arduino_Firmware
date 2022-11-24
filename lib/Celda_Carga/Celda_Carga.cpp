@@ -11,7 +11,7 @@
 Celda_Carga::Celda_Carga(const short Port_conect, const short Port_out) : 
     Balanza(Port_conect, Port_out), calVal_eepromAdress{0}
 {
-
+    //No realiza nada aún.
 }
 
 
