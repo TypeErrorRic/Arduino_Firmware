@@ -10,7 +10,7 @@
 
 
 #include <HX711_ADC.h>
-#include "../include/config.h"
+#include "config.h"
 
 //Clase Celda de carga:
 class Celda_Carga

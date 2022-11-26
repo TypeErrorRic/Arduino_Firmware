@@ -152,7 +152,8 @@ namespace Testeo
     {
         Serial.println(EEPROM.read(1023));
         Serial.println(EEPROM.length()-1);
-        Memoria_no_volatil mem(0);
+        Memoria_no_volatil mem;
+        /*
         mem.indentificar();
         int num{32};
         mem.Escritura(num);
@@ -165,6 +166,7 @@ namespace Testeo
         mem3.Escritura<float>(num1);
         mem3.Lectura<float>(num1);
         mem3.imprimir();
+        */
     }
 }
 

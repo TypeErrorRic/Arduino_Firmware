@@ -16,7 +16,7 @@
  * @param Port_out 
  */
 Celda_Carga::Celda_Carga(const short Port_conect, const short Port_out, bool _tare) : 
-    Balanza(Port_conect, Port_out), stabilizingtime{0}, calibracion(0)
+    Balanza(Port_conect, Port_out), stabilizingtime{0}, calibracion()
 {
     this -> _tare = _tare;
     Balanza.begin();

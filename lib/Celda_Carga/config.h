@@ -7,7 +7,7 @@
 
 struct Elementos_Memoria
 {
-    Memoria_no_volatil Memoria{0};
+    Memoria_no_volatil Memoria;
     int numero;
 };
 
