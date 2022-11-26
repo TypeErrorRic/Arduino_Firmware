@@ -3,6 +3,7 @@
 #include <Regresion_Cuadratica.h> 
 #include <Celda_Carga.h>
 #include <Operaciones.h>
+#include <Memoria_no_volatil.h>
 //Funciones de testeo:
 #include "..\include\Testeo.h"
 
@@ -49,6 +50,7 @@ void setup()
   Matriz.reset();
   pinMode(LED_BUILTIN, OUTPUT); //Configuración del led.
   Serial.println("Setup conluido correctamente.");
+  EEPROM.write(1023, 0);
 }
 
 
@@ -57,6 +59,7 @@ void setup()
  */
 void loop() 
 {
+  Testeo::memorias();
   int contador_num{0};
   digitalWrite(LED_BUILTIN, LOW);
   Serial.println("Calculando....");

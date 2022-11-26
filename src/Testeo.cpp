@@ -148,7 +148,25 @@ namespace Testeo
         }
         else Serial.println("No valido.");
     }
+    void memorias()
+    {
+        EEPROM.read(1023);
+        Serial.println(EEPROM.length()-1);
+        Memoria_no_volatil mem(0);
+        mem.indentificar();
+        int num{32};
+        mem.Escritura(num);
+        mem.Lectura(num);
+        Memoria_no_volatil mem2(1);
+        float num1{5.0f};
+        mem2.Escritura<float>(num1);
+        mem2.Lectura<float>(num1);
+        Memoria_no_volatil mem3(5);
+        mem3.Escritura<float>(num1);
+        mem3.Lectura<float>(num1);
+    }
 }
+
 
 /**
  * @note Implementación de las funciones de la manera más optima posible sin recurrir al uso de librerías.

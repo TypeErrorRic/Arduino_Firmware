@@ -10,16 +10,26 @@
 
 
 #include <HX711_ADC.h>
+#include "config.h"
 
 //Clase Celda de carga:
 class Celda_Carga
 {
     private:
         HX711_ADC Balanza;
-        const int calVal_eepromAdress;
-    public:
-        Celda_Carga(const short Port_conect, const short Port_out);
-        void Calibracion();
+        unsigned long stabilizingtime;
+        bool _tare;
+        boolean resume;
+        Memoria_no_volatil calibracion;
+
+    protected:
+        void Calibracion_peso();
+        void Configuracion_tare();
+        void changeSavedCalFactor();
+
+    public: 
+        Celda_Carga(const short Port_conect, const short Port_out, bool _tare);
+        void Update();
 };
 
 #else

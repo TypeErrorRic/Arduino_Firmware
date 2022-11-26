@@ -13,6 +13,7 @@
  */
 
 #include <Arduino.h>
+#include <Memoria_no_volatil.h>
 
 static constexpr unsigned int Nums{5};
 
@@ -26,6 +27,7 @@ namespace Testeo
     //Funciones:
     float Lectura_events();
     void Serial_events(float &num1, float &num2, bool& realizar);
+    void memorias();
 }
 
 #else
