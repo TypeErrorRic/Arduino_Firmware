@@ -50,7 +50,7 @@ void setup()
   Matriz.reset();
   pinMode(LED_BUILTIN, OUTPUT); //Configuración del led.
   Serial.println("Setup conluido correctamente.");
-  EEPROM.write(1023, 0);
+  EEPROM.write((EEPROM.length() - 1), 0);
 }
 
 

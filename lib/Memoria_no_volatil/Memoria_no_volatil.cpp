@@ -1,11 +1,12 @@
 #include <Memoria_no_volatil.h>
 
-short Memoria_no_volatil::ID = int(EEPROM.read(EEPROM.length() - 1));
+short Memoria_no_volatil::ID = 0;
 
 Memoria_no_volatil::Memoria_no_volatil(const short orden) : Function{true}, size{EEPROM.length()}
 {
+    ID = EEPROM.read(EEPROM.length() - 1);
     int contador{0}, i{0};
-    while(contador <= ID+1 and i<1023)
+    while(contador <= ID+1 and i<20)
     {
         if (EEPROM[i] == 255)
         {
@@ -50,10 +51,10 @@ Memoria_no_volatil::Memoria_no_volatil(const short orden) : Function{true}, size
     }
     else
     {
-        Serial.print("Se almaceno en: ");
+        Serial.print("Se almaceno en la dirreción: ");
         Serial.print(calVal_eepromAdress);
         Serial.print(" con el ID: ");
-        Serial.println(ID);
+        Serial.println(EEPROM[(EEPROM.length() - 1)]);
     }
 }
 
@@ -81,4 +82,12 @@ short & Memoria_no_volatil::indentificar()
 {
     Serial.println(ID);
     return ID;
+}
+
+void Memoria_no_volatil::imprimir()
+{
+    for(int i=0; i<50;i++)
+    {
+        Serial.println(EEPROM[i]);
+    }
 }

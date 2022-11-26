@@ -4,6 +4,8 @@
 #include <EEPROM.h>
 #include <Arduino.h>
 
+#undef MEMORIA_INICIAL
+
 class Memoria_no_volatil
 {
     private:
@@ -33,6 +35,7 @@ class Memoria_no_volatil
         short get_Adress();
         const bool &function();
         short &indentificar();
+        void imprimir();
 };
 #else
     #define Pass false
