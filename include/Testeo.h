@@ -28,9 +28,7 @@ namespace Testeo
     float Lectura_events();
     void Serial_events(float &num1, float &num2, bool& realizar);
     void memorias();
-}
+};
 
-#else
-    namespace Testeo;
 
 #endif

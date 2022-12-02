@@ -6,16 +6,21 @@ const unsigned int Memoria_no_volatil::size{EEPROM.length()};
 
 Memoria_no_volatil::Memoria_no_volatil() : Function{true}, estado_memoria{false}
 {
-    ID = EEPROM.read(EEPROM.length() - 1);
+    ID = (EEPROM.read(EEPROM.length() - 1) != 255) ? EEPROM.read(EEPROM.length() - 1): 0;
     this->calVal_eepromAdress = 0;
-    if(EEPROM[0] != 255)
+    if (EEPROM[calVal_eepromAdress] != 255)
     {
         short int i = 0;
         do
         {
-            if (EEPROM[i] == 255) size_dato = i;
-            else i++;
-        } while (EEPROM[i] == 255);
+            i++;
+            if (EEPROM[i] == 255)
+            {
+                size_dato = i;
+            }
+            Serial.println(i);
+        } 
+        while (EEPROM[i] != 255);
         if (i == 1 && EEPROM[i + 2] == 255)
         {
             size_dato = EEPROM.read(calVal_eepromAdress);
@@ -33,7 +38,6 @@ Memoria_no_volatil::Memoria_no_volatil() : Function{true}, estado_memoria{false}
     else
     {
         Serial.println("Se ha asignado en la posición cero correctamente");
-        ID += 1 ;
     }
 }
 
@@ -44,7 +48,7 @@ Memoria_no_volatil::~Memoria_no_volatil()
         if (EEPROM[i] != 255)
             EEPROM[i] = 255;
     }
-    EEPROM.write(calVal_eepromAdress, size);
+    if(unsigned(ID) < calVal_eepromAdress)EEPROM.write(calVal_eepromAdress, size_dato);
     Serial.println("Dato eliminado correctamente");
 }
 
@@ -71,6 +75,7 @@ void Memoria_no_volatil::imprimir()
     {
         Serial.println(EEPROM[i]);
     }
+    Serial.println(EEPROM[1023]);
 }
 
 void Memoria_no_volatil::limpiar()
@@ -83,7 +88,7 @@ void Memoria_no_volatil::limpiar()
     Serial.println("Memoria limpiada correctamente");
 }
 
-int unsigned& Memoria_no_volatil::operator[](int orden)
+const int unsigned& Memoria_no_volatil::operator[](int orden)
 {
     ID = EEPROM.read(EEPROM.length() - 1);
     int i{0};
@@ -100,14 +105,13 @@ int unsigned& Memoria_no_volatil::operator[](int orden)
             {
                 this->calVal_eepromAdress = i + 1;
                 Serial.println("Recuperación de memoría correcta");
-                short int j = i + 1;
+                short int j = i;
                 do
                 {
-                    if (EEPROM[j] == 255)
-                        size_dato = j - (i + 1);
-                    else
-                        j++;
-                } while (EEPROM[j] == 255);
+                    j++;
+                    if (EEPROM[j] == 255) size_dato = j - (i + 1);
+                } 
+                while (EEPROM[j] != 255);
                 if (j == 1 && EEPROM[i + 2] == 255)
                 {
                     size_dato = EEPROM.read(calVal_eepromAdress);
@@ -141,9 +145,8 @@ int unsigned& Memoria_no_volatil::operator[](int orden)
                 contador++;
         }
         i++;
-        Serial.println(i);
     }
-    EEPROM[(EEPROM.length() - 1)] = (orden >= ID) ? orden : ID;
+    EEPROM[size-1] = (orden >= ID) ? orden : ID;
     if (orden > ID + 1)
     {
         Serial.println("No se pudo recuperar o Asignar la memoria corectamente");
@@ -154,7 +157,7 @@ int unsigned& Memoria_no_volatil::operator[](int orden)
         Serial.print("Se almaceno en la dirreción: ");
         Serial.print(calVal_eepromAdress);
         Serial.print(" con el ID: ");
-        Serial.println(EEPROM[(EEPROM.length() - 1)]);
+        Serial.println(EEPROM[size]);
     }
     return calVal_eepromAdress;
 }

@@ -153,7 +153,18 @@ namespace Testeo
         Serial.println(EEPROM.read(1023));
         Serial.println(EEPROM.length()-1);
         Memoria_no_volatil mem;
+        mem.imprimir();
+        Serial.println(mem.apuntador(1));
+        Serial.println(mem.apuntador(2));
+        Serial.println(mem.apuntador(3));
         /*
+        Serial.println(mem.apuntador(1));
+        float num2 = 32.23f;
+        mem.Escritura(num2);
+        mem.Lectura(num2);
+        float num{45.32f};
+        mem.Escritura(num);
+        mem.Lectura(num);
         mem.indentificar();
         int num{32};
         mem.Escritura(num);

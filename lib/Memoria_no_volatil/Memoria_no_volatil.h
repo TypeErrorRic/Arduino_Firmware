@@ -19,7 +19,7 @@ class Memoria_no_volatil
     public:
         Memoria_no_volatil();
         ~Memoria_no_volatil();
-        template <typename T1> void Escritura(T1 datos)
+        template <typename T1> void Escritura(T1& datos)
         {
             if (Function)
             {
@@ -46,7 +46,7 @@ class Memoria_no_volatil
             }
             else Serial.println("Erro en la escritura: ID no correcto");
         }
-        template <typename T2> T2 Lectura(T2 data)
+        template <typename T2> T2 Lectura(T2& data)
         {
             if (size_dato == sizeof(T2))
             {
@@ -65,7 +65,7 @@ class Memoria_no_volatil
         short &indentificar();
         void imprimir();
         static void limpiar();
-        int unsigned& operator[](int indx);
+        const int unsigned &operator[](int indx);
 };
 #else
     #define INSTANCIADO "Memoria ya usada"
