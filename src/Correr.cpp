@@ -1,8 +1,5 @@
 #include "../include/Correr.h"
 
-//Inicalizar tiempo:
-static unsigned long tiempo = millis();
-
 // Estucutra que almacena los valores de los sensores.
 static Variables::Valores_Sensores Medidas{};
 static Variables_Celda_Carga Celda_Carga;
@@ -37,7 +34,7 @@ namespace Correr
         for(short i=2; i < run.Num_elementos;i++) pinMode(i, INPUT);
     }
 
-    void Sensores_estado_6(sensores sensor)
+    void Sensores_estado_6()
     {
         if (digitalRead(static_cast<uint8_t>(sensores::comutador)) == 1 && not(run.Valvula_manual))
         {
@@ -66,11 +63,11 @@ namespace Correr
         Serial.println(" kg");
         delay(500);
         run.peso = balanza.get_units(20);
-        if(0 > run.peso > 0.5)
+        if((0 <= run.peso && run.peso <= 0.5) && run.ejecucion == true)
         {
             Serial.println("Abriendo eletrovalvula");
             digitalWrite(static_cast<uint8_t>(sensores::Eletrovalvula), HIGH);
-            while(run.ejecucion)
+            while (run.ejecucion && (0 <= run.peso && run.peso <= 0.5))
             {
                 switch (Sensor)
                 {
@@ -97,21 +94,32 @@ namespace Correr
                 case sensores::Sensor4:
                     Serial.println("Se a activado el sensor # 4.");
                     Serial.println("Abrir electrovalvula");
-                    
+                    while (Sensor == sensor::Sensor4)
+                    {
+                        Sensores_estado_6();
+                    }
                     break;
                 case sensores::Sensor5:
                     Serial.println("Se a activado el sensor # 5.");
                     if (digitalRead(static_cast<uint8_t>(sensores::comutador)) == 1)
                     {
-                            Serial.println("Abrir la valvula manual. Nivel del 90% alcanzado");
+                        Serial.println("Abrir la valvula manual. Nivel del 90% alcanzado");
+                        digitalWrite(static_cast<uint8_t>(sensores::Alerta_visual), HIGH);
+                        do
+                        {
+                            Serial.println("Abrir Enserió.");
+                            if(run.Valvula_manual) while (Sensor == sensor::Sensor5);
+                        } 
+                        while (not(run.Valvula_manual));
                     }
                     break;
                 default:
+                    Operaciones.Valores(run.peso);
                     break;
-                }
                 delay(1000);
+                }
             }
         }
-        else Serial.println("Se debe de abrir la Eletrovalvula");
+        else Serial.println("Se debe de abrir la Valvula manual");
     }
 }; // namespace Correr

@@ -6,6 +6,7 @@
 
 enum class sensores
 {
+    Sensorr0 = 1,
     Sensor1 = 2,
     Sensor2 = 3,
     Sensor3 = 4,
@@ -21,7 +22,7 @@ struct Variables_Correr
     float data{};
     float peso{};
     int apuntador{};
-    bool ejecucion{true};
+    bool ejecucion{false};
     short int Num_elementos{8};
     bool Valvula_manual{false};
     const float densidad{1000};
@@ -30,7 +31,6 @@ struct Variables_Correr
 
 namespace Correr
 {
-    bool disminucion{false};
     void Sensor_estado_6(sensores sensor);
     void setup();
     void loop();

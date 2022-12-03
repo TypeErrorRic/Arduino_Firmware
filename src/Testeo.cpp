@@ -150,6 +150,7 @@ namespace Testeo
     }
     void memorias()
     {
+        /*
         Serial.println(EEPROM.read(1023));
         Serial.println(EEPROM.length()-1);
         Memoria_no_volatil mem;
@@ -157,7 +158,6 @@ namespace Testeo
         Serial.println(mem.apuntador(1));
         Serial.println(mem.apuntador(2));
         Serial.println(mem.apuntador(3));
-        /*
         Serial.println(mem.apuntador(1));
         float num2 = 32.23f;
         mem.Escritura(num2);

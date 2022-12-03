@@ -5,7 +5,7 @@
 Caudal::Caudal(const float densidad, const float peso, const float &radio) : 
 densidad(densidad), valores(nullptr), Peso_total(peso), radio(radio)
 {
-  for (int i = 0; i <= 3; i++) velocidad[i] = valores[i] * (2-i);
+  for (int i = 0; i <= 2; i++) velocidad[i] = valores[i] * (2-i);
   this -> velocidad_caudal = 0;
   this->Peso_ultimo = 1;
   this->tiempo = millis();
@@ -28,7 +28,7 @@ float Caudal::estado(float& peso)
   return (Peso_ultimo-0.2) < peso ? 1 : -1;
 }
 
-float Caudal::Valores(float & peso)
+void Caudal::Valores(float & peso)
 {
   peso = peso >= 0 ? peso : 0;
   if(variacion_peso(volumen(peso)))

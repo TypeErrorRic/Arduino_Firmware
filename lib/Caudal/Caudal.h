@@ -22,9 +22,8 @@ class Caudal
         bool variacion_peso(float volumen);
     public:
         Caudal(const float densidad, const float peso, const float& radio);
-        ~Caudal();
         void set_valores(float valores[3], float velocidad);
-        float Valores(float &peso);
+        void Valores(float &peso);
         float estado(float &peso);
 };
 
