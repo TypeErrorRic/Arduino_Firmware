@@ -1,23 +1,31 @@
 #ifndef CAUDAL_H
 #define CAUDAL_H
 
+#include <Arduino.h>
+
 #define elementos 3
 
 class Caudal
 {
     private:
         const float densidad;
-        const float radio;
-        float derivada[elementos];
+        float velocidad[elementos];
         const float *valores;
-        static const float Diametro;
-        static const float Gravedad;
-    public:
-        Caudal(const float densidad, const float radio);
-        ~Caudal();
-        float posicion(float &peso);
+        float Peso_ultimo;
+        const float Peso_total;
+        unsigned long tiempo;
+        float velocidad_caudal;
+        float volumen_ultimo;
+        const float radio;
+    protected:
         float volumen(float &peso);
-        void set_valores(float valores[3]);
+        bool variacion_peso(float volumen);
+    public:
+        Caudal(const float densidad, const float peso, const float& radio);
+        ~Caudal();
+        void set_valores(float valores[3], float velocidad);
+        float Valores(float &peso);
+        float estado(float &peso);
 };
 
 #else

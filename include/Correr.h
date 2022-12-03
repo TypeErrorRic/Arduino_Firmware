@@ -12,7 +12,8 @@ enum class sensores
     Sensor4 = 5,
     Sensor5 = 6,
     comutador = 7,
-    Eletrovalvula = 8
+    Eletrovalvula = 8,
+    Alerta_visual = 9
 };
 
 struct Variables_Correr
@@ -30,6 +31,7 @@ struct Variables_Correr
 namespace Correr
 {
     bool disminucion{false};
+    void Sensor_estado_6(sensores sensor);
     void setup();
     void loop();
 };
