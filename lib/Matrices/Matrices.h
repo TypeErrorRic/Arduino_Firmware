@@ -32,7 +32,8 @@ class Matrices
     public:
         Matrices(const int size_x, float x[], float y[]);
         ~Matrices();
-        bool Update(const float x, const float y);
+        bool Update(const float y);
+        bool Update_x(const float x);
         virtual void Calcular();
         void get_Matriz();
 };

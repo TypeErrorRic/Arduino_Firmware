@@ -24,7 +24,7 @@
  */
 void setup() 
 {
-  Correr::setup();
+  Calibracion::setup();
 }
 
 
@@ -33,7 +33,7 @@ void setup()
  */
 void loop() 
 {
-  Correr::loop();
+  Calibracion::loop();
 }
 
 /**

@@ -126,35 +126,30 @@ namespace Testeo
         if(realizar)
         {
             //Se encara de pedir cada uno de los pares númericos a los cuales se les quiere conseguir la regresión cuadratica.
-            for (int i = 0; i < 2; i++)
+            Serial.println("Ingrese el valor de x: ");
+            while (siguiente)
             {
-                if (i == 0)
+                num2 = Lectura_events();
+                if(num1 >= num2)
                 {
-                    Serial.println("Ingrese el valor de x: ");
-                    while (siguiente)
-                        num1 = Lectura_events();
                     siguiente = true;
-                    data = 0;
+                    Serial.println("Valor incorrecto: Menor al ingresado anteriormente.");
                 }
-                else
-                {
-                    Serial.println("Ingrese el valor de y: ");
-                    while (siguiente)
-                        num2 = Lectura_events();
-                    siguiente = true;
-                    data = 0;
-                }
+
             }
+            siguiente = true;
+            data = 0;
         }
         else Serial.println("No valido.");
     }
     void memorias()
     {
-        /*
         Serial.println(EEPROM.read(1023));
         Serial.println(EEPROM.length()-1);
+        
         Memoria_no_volatil mem;
         mem.imprimir();
+        /*
         Serial.println(mem.apuntador(1));
         Serial.println(mem.apuntador(2));
         Serial.println(mem.apuntador(3));

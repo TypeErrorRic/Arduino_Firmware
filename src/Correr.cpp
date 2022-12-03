@@ -5,11 +5,11 @@ static Variables::Valores_Sensores Medidas{};
 static Variables_Celda_Carga Celda_Carga;
 static HX711 balanza;
 static Variables_Correr run;
-static Caudal Operaciones{run.densidad, 7.1f, run.radio};
+static Variables_Celda_Carga num;
+static Caudal Operaciones{run.densidad, Celda_Carga.Valores.peso_total, Celda_Carga.Valores.radio_llave};
 
-typedef enum sensores sensor;
-
-sensor Sensor; 
+//Valores para los sensores
+static sensor Sensor; 
 
 namespace Correr
 {
@@ -31,7 +31,7 @@ namespace Correr
         Serial.println("Listo para pesar");
         pinMode(static_cast<uint8_t>(sensores::Eletrovalvula), OUTPUT);
         pinMode(static_cast<uint8_t>(sensores::Alerta_visual), OUTPUT);
-        for(short i=2; i < run.Num_elementos;i++) pinMode(i, INPUT);
+        for(short i=2; i <= num.Num_elementos;i++) pinMode(i, INPUT);
     }
 
     void Sensores_estado_6()

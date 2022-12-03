@@ -2,7 +2,7 @@
 
 #define pi 3.14
 
-Caudal::Caudal(const float densidad, const float peso, const float &radio) : 
+Caudal::Caudal(const float densidad, const float &peso, const float &radio) : 
 densidad(densidad), valores(nullptr), Peso_total(peso), radio(radio)
 {
   for (int i = 0; i <= 2; i++) velocidad[i] = valores[i] * (2-i);

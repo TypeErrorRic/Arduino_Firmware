@@ -43,16 +43,26 @@ Matrices::~Matrices()
  * @return true
  * @return false
  */
-bool Matrices::Update(const float x, const float y)
+bool Matrices::Update(const float y)
 {
     contador++;
     contador = contador % (size_x);
-    this->x[contador] = x;
     this->y[contador] = y;
     if (not(contador == (size_x-1))) return true;
     else return false;
 }
 
+
+bool Matrices::Update_x(const float x)
+{
+    contador++;
+    contador = contador % (size_x);
+    this->x[contador] = x;
+    if (not(contador == (size_x - 1)))
+        return true;
+    else
+        return false;
+}
 
 /**
  * @brief Interfaz que se encarga del calculo de Cada uno de los elementos de la Matriz de Regresión.
