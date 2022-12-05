@@ -10,6 +10,9 @@ static short int estado80{};
 static short int estado90{};
 static bool array[5]{};
 static bool conmutador{true};
+
+static bool pass_f{false};
+
 namespace Correr2
 {
     void setup()
@@ -20,20 +23,31 @@ namespace Correr2
         pinMode(static_cast<uint8_t>(sensores::Eletrovalvula), OUTPUT);
         pinMode(static_cast<uint8_t>(sensores::Alerta_visual), OUTPUT);
         pinMode(13, OUTPUT);
+        pinMode(11, OUTPUT);
         for (int i = 0; i < 5; i++) array[i] = false;
-        digitalWrite(13, HIGH);
+        digitalWrite(13, LOW);
+        digitalWrite(11, LOW);
         conmutador = true;
         var.Valvula_manual = false;
         var.ejecucion = true;
+        Serial.println("Este programa es una simulacion real del diagrama de estados");
+        Serial.println("Se le deben ingresar valores numericos que representan la activacion de los niveles de agua.");
+        Serial.println("El numero 1 representa: Nivel 20%");
+        Serial.println("El numero 2 representa: Nivel 40%");
+        Serial.println("El numero 3 representa: Nivel 60%");
+        Serial.println("El numero 4 representa: Nivel 80%");
+        Serial.println("El numero 1 representa: Nivel 90%");
+        Serial.println("Para abrir la Valvula Manual presionar A");
+        Serial.println("********************");
     }
 
     char Sensores_estado_6()
     {
         char aux3{'7'};
         bool finalizar{true};
-        if (conmutador == true && not(var.Valvula_manual))
+        if (conmutador == true)
         {
-            Serial.println("Para abrir valvula oprima a");
+            if (not(pass_f)) Serial.println("Para abrir valvula oprima a");
             do
             {
                 while (Serial.available() > 0)
@@ -42,7 +56,7 @@ namespace Correr2
                     if(aux3 == 'a') var.Valvula_manual = true;
                     if (var.Valvula_manual)
                     {
-                        Serial.println("Se ha abierto la valvula manual");
+                        if (not(pass_f)) Serial.println("Se ha abierto la valvula manual");
                         digitalWrite(12, HIGH);
                         digitalWrite(13, LOW);
                         Serial.readString();
@@ -81,7 +95,9 @@ namespace Correr2
                                             }
                                         }
                                         digitalWrite(13, HIGH);
+                                        Serial.println("Se abrio la eletrovalvula");
                                         finalizar = false;
+                                        pass_f = false;
                                         break;
                                     }
                                     else
@@ -90,6 +106,8 @@ namespace Correr2
                                         Serial.println("Error");
                                         Serial.println("Vaciar el tanque primero.");
                                         finalizar = false;
+                                        var.Valvula_manual = false;
+                                        digitalWrite(12, LOW);
                                     }
                                     break;
                                 }
@@ -106,6 +124,8 @@ namespace Correr2
                                         Serial.println("Error");
                                         Serial.println("Vaciar el tanque primero.");
                                         finalizar = false;
+                                        var.Valvula_manual = false;
+                                        digitalWrite(12, LOW);
                                     }
                                     break;
                                 }
@@ -119,6 +139,8 @@ namespace Correr2
                                     else
                                     {
                                         var.ejecucion = false;
+                                        var.Valvula_manual = false;
+                                        digitalWrite(12, LOW);
                                         Serial.println("Error");
                                         Serial.println("Vaciar el tanque primero.");
                                         finalizar = false;
@@ -127,7 +149,7 @@ namespace Correr2
                                 }
                                 if (estado80 == 1)
                                 {
-                                    if (array[4] == false && array[0] == true && array[1] == true && array[2] == true)
+                                    if (array[4] == false && array[0] == true && array[1] == true && array[2] == true && not(pass_f))
                                     {
                                         Serial.println("Nivel del 80%: Alcanzado.");
                                         array[3] = false;
@@ -135,6 +157,8 @@ namespace Correr2
                                     else
                                     {
                                         var.ejecucion = false;
+                                        var.Valvula_manual = false;
+                                        digitalWrite(12, LOW);
                                         Serial.println("Error");
                                         Serial.println("Vaciar el tanque primero.");
                                         finalizar = false;
@@ -157,7 +181,7 @@ namespace Correr2
             aux3 = {'\0'};
             Serial.println("Tanque vaceado");
             digitalWrite(12, LOW);
-            Serial.println("Fin de la jornada. Que tenga buen día");
+            Serial.println("Fin de la jornada. Que tenga buen dia");
         }
         return aux3;
     }
@@ -167,39 +191,41 @@ namespace Correr2
         Serial.println("Se prendio la maquina");
         while (conmutador)
         {
+            char aux41{};
             if (array[3] == true or array[0] == true or array[1] == true or array[2] == true or array[4] == true)
             {
                 var.ejecucion = false;
                 digitalWrite(13, LOW);
-                char aux41{};
                 while(aux41 != 'a')
                 {
                     while (Serial.available() > 0)
                     {
-                        char aux41 = Serial.read();
+                        aux41 = Serial.read();
                         if (aux41 == 'a')
                         {
                             var.Valvula_manual = false;
                             var.ejecucion = true;
-                            Serial.println("Se está vaceando el tanque.");
+                            Serial.println("Se esta vaceando el tanque.");
                             digitalWrite(12, HIGH);
                             delay(1000);
                             Serial.println("Cerrando valvula");
                             digitalWrite(12, LOW);
+                            for (int i = 0; i < 5; i++) array[i] = false;
                             Serial.println("Listo para ser llenado de nuevo");
+                            break;
                         }
                     }
                 }
-                aux41 = '0';
             }
+            aux41 = '0';
+            Serial.readString();
             bool exceso{false};
-            bool pass{false};
             if (var.ejecucion)
             {
                 digitalWrite(13, HIGH);
                 char aux = {'\0'};
                 Serial.println("Para terminar turno presionar t");
-                Serial.println("Ingrese un valor: ");
+                Serial.println("Se encendio la eletrovalvula");
                 while (var.ejecucion)
                 {
                     while (Serial.available() > 0)
@@ -211,12 +237,12 @@ namespace Correr2
                             if (array[3] == true && array[0] == true && array[1] == true && array[2] == true)
                             {
                                 Serial.println("Nivel del 90%: Alcanzado.");
+                                digitalWrite(11, HIGH);
                                 if (conmutador == true)
                                 {
                                     array[4] = true;
-                                    Serial.println("Abrir la valvula manual. Nivel del 90% alcanzado");
-                                    digitalWrite(static_cast<uint8_t>(sensores::Alerta_visual), HIGH);
-                                    Serial.println("Abrir Enserió.");
+                                    Serial.println("Abrir la valvula manual.");
+                                    Serial.println("Abrir Enserio.");
                                     do
                                     {
                                         while (Serial.available() > 0)
@@ -226,18 +252,22 @@ namespace Correr2
                                             {
                                                 digitalWrite(12, HIGH);
                                                 digitalWrite(13, LOW);
-                                                Serial.println("Se ha avierto");
+                                                digitalWrite(11, LOW);
+                                                Serial.println("Se ha abierto");
                                                 var.Valvula_manual = true;
                                             }
                                         }
                                         if (var.Valvula_manual)
                                             while (array[4] == true) while (Serial.available() > 0)
                                                 {
-                                                    char aux = Serial.read();
-                                                    if (aux == '4')
+                                                    char aux10 = Serial.read();
+                                                    if (aux10 == '4')
                                                     {
                                                         array[4] = false;
-                                                        pass = true;
+                                                        array[3] = false;
+                                                        pass_f = true;
+                                                        exceso = false;
+                                                        digitalWrite(12, LOW);
                                                     }
                                                 }
                                     } while (not(var.Valvula_manual));
@@ -251,13 +281,14 @@ namespace Correr2
                             }
                         }
                         estado80 = '4' == aux ? 1 : 0;
-                        if (estado80 == 1 || pass)
+                        if (estado80 == 1 || pass_f)
                         {
                             if (array[4] == false && array[0] == true && array[1] == true && array[2] == true)
                             {
-                                array[3] = true;
-                                Serial.println("Nivel del 80%: superado.");
-                                while ('4' == aux)
+                                if(not(pass_f)) array[3] = true;
+                                if(not(pass_f)) Serial.println("Nivel del 80%: superado.");
+                                else Serial.println("Nivel del 80%: Alcanzado.");
+                                while ('4' == aux or pass_f)
                                 {
                                     aux = Sensores_estado_6();
                                     if(aux == '5') 
