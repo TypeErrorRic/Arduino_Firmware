@@ -2,10 +2,10 @@
 #include <Arduino.h>
 #include <Regresion_Cuadratica.h> 
 #include <Caudal.h>
-#include <Memoria_no_volatil.h>
 //Elementos de ejecuión:
 #include "..\include\Set_up.h"
 #include "..\include\Correr.h"
+#include "..\include\Sensores.h"
 
 /**
  * @file Proyecto de Taller de Ingeniería.
@@ -24,7 +24,7 @@
  */
 void setup() 
 {
-  Calibracion::setup();
+  Correr2::setup();
 }
 
 
@@ -33,7 +33,7 @@ void setup()
  */
 void loop() 
 {
-  Calibracion::loop();
+  Correr2::loop();
 }
 
 /**

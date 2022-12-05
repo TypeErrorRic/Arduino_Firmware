@@ -26,13 +26,13 @@ Memoria_no_volatil::Memoria_no_volatil() : Function{true}, estado_memoria{false}
             size_dato = EEPROM.read(calVal_eepromAdress);
             Serial.print("Se está reutilizando un Espacio con tamaño: ");
             Serial.println(size_dato);
-            estado_memoria = true;
         }
         else
         {
             Serial.print("Recuperación de memoría correcta. ");
             Serial.print("Tamaño: ");
             Serial.println(size_dato);
+            estado_memoria = true;
         }
     }
     else
@@ -43,13 +43,7 @@ Memoria_no_volatil::Memoria_no_volatil() : Function{true}, estado_memoria{false}
 
 Memoria_no_volatil::~Memoria_no_volatil()
 {
-    for (int unsigned i = calVal_eepromAdress; i < size_dato; i++)
-    {
-        if (EEPROM[i] != 255)
-            EEPROM[i] = 255;
-    }
-    if(unsigned(ID) < calVal_eepromAdress)EEPROM.write(calVal_eepromAdress, size_dato);
-    Serial.println("Dato eliminado correctamente");
+    Serial.println("Datos almacenados correctamente.");
 }
 
 short Memoria_no_volatil::get_Adress()
@@ -58,9 +52,9 @@ short Memoria_no_volatil::get_Adress()
     else return 0;
 }
 
-const bool &Memoria_no_volatil::function()
+const bool &Memoria_no_volatil::state()
 {
-    return Function;
+    return estado_memoria;
 }
 
 short & Memoria_no_volatil::indentificar()
@@ -92,10 +86,10 @@ const int unsigned& Memoria_no_volatil::operator[](int orden)
 {
     ID = EEPROM.read(EEPROM.length() - 1);
     int i{0};
-    short contador{0};
-    while (contador <= ID + 1 and i < 20)
+    short contador{1};
+    while (contador <= ID + 1 and i < 50)
     {
-        if (orden == 0)
+        if (orden == 0 || EEPROM[0] == 255)
         {
             break;
         }
@@ -106,24 +100,41 @@ const int unsigned& Memoria_no_volatil::operator[](int orden)
                 this->calVal_eepromAdress = i + 1;
                 Serial.println("Recuperación de memoría correcta");
                 short int j = i;
+                short int validacion{0};
                 do
                 {
                     j++;
-                    if (EEPROM[j] == 255) size_dato = j - (i + 1);
+                    if (EEPROM[j] == 255)
+                    {
+                        size_dato = j - (i + 1);
+                        if(EEPROM[size_dato+(i+2)] != 255)
+                        {
+                            for (short int k = 1; i < 4; k++) validacion += EEPROM[size_dato + (i + 1) + k] == 250 ? 0 : 1;
+                        }
+                    }
                 } 
                 while (EEPROM[j] != 255);
                 if (j == 1 && EEPROM[i + 2] == 255)
                 {
                     size_dato = EEPROM.read(calVal_eepromAdress);
-                    Serial.print("Se está reutilizando un Espacio con tamaño: ");
+                    this->calVal_eepromAdress = size_dato+i+1;
                     Serial.println(size_dato);
+                    estado_memoria = false;
+                }
+                else if(EEPROM[(i+1)+size_dato+2] == 255 && validacion == 1)
+                {
+                    Serial.print("Recuperación de memoría correcta. ");
+                    Serial.print("Con tamaño: ");
+                    Serial.print(size_dato);
+                    Serial.print("Y con tamaño disponible de: ");
+                    Serial.println(size_dato + EEPROM.read((i + 1) + size_dato + 1));
                     estado_memoria = true;
                 }
                 else
                 {
                     Serial.print("Recuperación de memoría correcta. ");
                     Serial.print("Con tamaño: ");
-                    Serial.println(size_dato);
+                    Serial.print(size_dato);
                 }
                 break;
             }
@@ -133,6 +144,7 @@ const int unsigned& Memoria_no_volatil::operator[](int orden)
                 Serial.println("Asignación correcta de memoría correcta");
                 size_dato = (size-i-1);
                 Serial.println("Tamaño disponible:");
+                estado_memoria = false;
                 break;
             }
             else if (orden > ID + 1)
@@ -160,4 +172,9 @@ const int unsigned& Memoria_no_volatil::operator[](int orden)
         Serial.println(EEPROM[size]);
     }
     return calVal_eepromAdress;
+}
+
+short unsigned & Memoria_no_volatil::lenght()
+{
+    return size_dato;
 }

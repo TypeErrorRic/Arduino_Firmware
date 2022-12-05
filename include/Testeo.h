@@ -13,7 +13,8 @@
  */
 
 #include <Arduino.h>
-#include <Memoria_no_volatil.h>
+#include <Memorial_light.h>
+#include "Config.h"
 
 static constexpr unsigned int Nums{5};
 
@@ -27,8 +28,8 @@ namespace Testeo
     //Funciones:
     float Lectura_events();
     void Serial_events(float &num1, float &num2, bool& realizar);
-    void memorias();
-};
-
-
+    //int numeros();
+    void Valores(float &num1, float &num2);
+    void memorias(const Variables_Celda_Carga &guardar);
+}
 #endif

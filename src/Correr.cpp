@@ -1,12 +1,12 @@
 #include "../include/Correr.h"
+#include "..\include\Testeo.h"
 
 // Estucutra que almacena los valores de los sensores.
-static Variables::Valores_Sensores Medidas{};
 static Variables_Celda_Carga Celda_Carga;
 static HX711 balanza;
 static Variables_Correr run;
 static Variables_Celda_Carga num;
-static Caudal Operaciones{run.densidad, Celda_Carga.Valores.peso_total, Celda_Carga.Valores.radio_llave};
+static Caudal Operaciones{Celda_Carga.densidad, Celda_Carga.Valores.peso_total, Celda_Carga.Valores.radio_llave};
 
 //Valores para los sensores
 static sensor Sensor; 
@@ -15,6 +15,8 @@ namespace Correr
 {
     void setup()
     {
+        Memoria_light men;
+        men.Escritura(Celda_Carga.Valores);
         Serial.begin(Variables::VELOCIDAD_DATOS);
         delay(10);
         Serial.println();
@@ -25,13 +27,14 @@ namespace Correr
         Serial.println("No ponga ningun  objeto sobre la balanza");
         Serial.println("Destarando...");
         Serial.println("...");
-        balanza.set_scale(EEPROM.get(Celda_Carga.calVal_eepromAdress, run.data)); // Establecemos la escala
+        balanza.set_scale(Celda_Carga.Valores.suma_valores); // Establecemos la escala
         balanza.tare(20); // El peso actual es considerado Tara.
 
         Serial.println("Listo para pesar");
         pinMode(static_cast<uint8_t>(sensores::Eletrovalvula), OUTPUT);
         pinMode(static_cast<uint8_t>(sensores::Alerta_visual), OUTPUT);
         for(short i=2; i <= num.Num_elementos;i++) pinMode(i, INPUT);
+        EEPROM.get(0, Celda_Carga.Valores);
     }
 
     void Sensores_estado_6()

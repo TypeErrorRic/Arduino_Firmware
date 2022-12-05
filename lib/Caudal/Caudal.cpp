@@ -36,7 +36,7 @@ void Caudal::Valores(float & peso)
     Serial.print("Volumen en el tanque: ");
     Serial.print(volumen(peso));
     Serial.print("            Porcentaje del tanque lleno: ");
-    Serial.println(volumen(peso) / Peso_total);
+    Serial.println((peso / Peso_total)*100);
   }
   else Serial.println("Fluo de agua no constante reiniciar.");
 }
