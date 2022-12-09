@@ -122,29 +122,29 @@ namespace Calibracion
             balanza.set_scale(Celda_Carga.Valores.suma_valores);
             do
             {
-                if (digitalRead(static_cast<uint8_t>(sensores::Sensor5)))
+                if (digitalRead(static_cast<uint8_t>(_sensor_::Sensor5)))
                 {
                     Serial.println("Se ha estableciod el valor # 5");
                     Matriz.Update_x(balanza.get_units(20));
                     Calibrar.velocidad = ((Celda_Carga.Valores.peso_total * Celda_Carga.densidad) / 9.8) / Calibrar.time;
                     break;
                 }
-                else if (digitalRead(static_cast<uint8_t>(sensores::Sensor4)))
+                else if (digitalRead(static_cast<uint8_t>(_sensor_::Sensor4)))
                 {
                     Serial.println("Se ha estableciod el valor # 4");
                     Matriz.Update_x(balanza.get_units(20));
                 }
-                else if (digitalRead(static_cast<uint8_t>(sensores::Sensor3)))
+                else if (digitalRead(static_cast<uint8_t>(_sensor_::Sensor3)))
                 {
                     Serial.println("Se ha estableciod el valor # 3");
                     Matriz.Update_x(balanza.get_units(20));
                 }
-                else if (digitalRead(static_cast<uint8_t>(sensores::Sensor2)))
+                else if (digitalRead(static_cast<uint8_t>(_sensor_::Sensor2)))
                 {
                     Serial.println("Se ha estableciod el valor # 2");
                     Matriz.Update_x(balanza.get_units(20));
                 }
-                else if (digitalRead(static_cast<uint8_t>(sensores::Sensor1)))
+                else if (digitalRead(static_cast<uint8_t>(_sensor_::Sensor1)))
                 {
                     Serial.println("Se ha estableciod el valor # 1");
                     Matriz.Update_x(balanza.get_units(20));

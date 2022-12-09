@@ -6,21 +6,6 @@
 
 #define Nfilas 5
 
-enum class sensores
-{
-    Sensor0 = 1,
-    Sensor1 = 2,
-    Sensor2 = 3,
-    Sensor3 = 4,
-    Sensor4 = 5,
-    Sensor5 = 6,
-    comutador = 7,
-    Eletrovalvula = 13,
-    Alerta_visual = 12
-};
-
-typedef enum sensores sensor;
-
 namespace Variables
 {
     constexpr int VELOCIDAD_DATOS{9600};
@@ -28,8 +13,8 @@ namespace Variables
 
 struct Variables_config
 {
-    float peso_total{-1};
-    float radio_llave{-1};
+    float peso_total{0};
+    float radio_llave{0};
     float valores[3]{0};
     float y[Nfilas]{};
     float suma_valores{0};

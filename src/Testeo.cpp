@@ -185,7 +185,7 @@ namespace Testeo
     void memorias(const Variables_Celda_Carga &guardar)
     {
         bool seguir{true};
-        Memoria_light mem;
+        Memoria_no_volatil mem;
         Serial.println("Menu de la memoria:");
         Serial.println("*Para borrar la memoria oprima b.");
         // Serial.println("*Para borrar la memoria oprima r.");

@@ -6,16 +6,14 @@
 
 struct Variables_Correr
 {
-    float data{};
-    float peso{};
-    int apuntador{};
     bool ejecucion{false};
     bool Valvula_manual{false};
+    bool conmutador{false};
+    bool array[Nfilas]{};
 };
 
 namespace Correr
 {
-    void Sensor_estado_6();
     void setup();
     void loop();
 };

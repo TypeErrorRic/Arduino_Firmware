@@ -1,128 +1,46 @@
 #include "../include/Correr.h"
-#include "..\include\Testeo.h"
+#include <Functional.h>
 
-// Estucutra que almacena los valores de los sensores.
-static Variables_Celda_Carga Celda_Carga;
-static HX711 balanza;
-static Variables_Correr run;
-static Variables_Celda_Carga num;
-static Caudal Operaciones{Celda_Carga.densidad, Celda_Carga.Valores.peso_total, Celda_Carga.Valores.radio_llave};
-
-//Valores para los sensores
-static sensor Sensor; 
+static Variables_Correr var;
+static Functional run(var.ejecucion,var.Valvula_manual,var.conmutador);
 
 namespace Correr
 {
     void setup()
     {
-        Memoria_light men;
-        men.Escritura(Celda_Carga.Valores);
         Serial.begin(Variables::VELOCIDAD_DATOS);
-        delay(10);
-        Serial.println();
-        Serial.println("Starting...");
-        balanza.begin(Celda_Carga.HX711_dout, Celda_Carga.HX711_sck);
-        Serial.print("Lectura del valor del ADC:  ");
-        Serial.println(balanza.read());
-        Serial.println("No ponga ningun  objeto sobre la balanza");
-        Serial.println("Destarando...");
-        Serial.println("...");
-        balanza.set_scale(Celda_Carga.Valores.suma_valores); // Establecemos la escala
-        balanza.tare(20); // El peso actual es considerado Tara.
-
-        Serial.println("Listo para pesar");
-        pinMode(static_cast<uint8_t>(sensores::Eletrovalvula), OUTPUT);
-        pinMode(static_cast<uint8_t>(sensores::Alerta_visual), OUTPUT);
-        for(short i=2; i <= num.Num_elementos;i++) pinMode(i, INPUT);
-        EEPROM.get(0, Celda_Carga.Valores);
+        run.init();
+        var.conmutador = true;
+        var.Valvula_manual = false;
+        var.ejecucion = true;
+        for (int i = 0; i < 5; i++) var.array[i] = false;
+        Serial.println("Simulacion real del Diagrama de estados.");
+        Serial.println("Se le deben ingresar valores numericos que representan la activacion.");
+        Serial.println("El numero 1 representa: Nivel 20%");
+        Serial.println("El numero 2 representa: Nivel 40%");
+        Serial.println("El numero 3 representa: Nivel 60%");
+        Serial.println("El numero 4 representa: Nivel 80%");
+        Serial.println("El numero 1 representa: Nivel 90%");
+        Serial.println("Para abrir/cerrar la Valvula Manual presionar a.");
+        Serial.println("Para apagar/prender conmutador presionar t.");
+        Serial.println('\n');
     }
-
-    void Sensores_estado_6()
-    {
-        if (digitalRead(static_cast<uint8_t>(sensores::comutador)) == 1 && not(run.Valvula_manual))
-        {
-            digitalWrite(static_cast<uint8_t>(sensores::Alerta_visual), HIGH);
-            do
-            {
-                run.Valvula_manual = Operaciones.estado(run.peso) == 1 ? false : true;
-                if (run.Valvula_manual)
-                {
-                    Serial.println("Se ha abierto la valvula manual");
-                    break;
-                }
-            } while (digitalRead(static_cast<uint8_t>(sensores::Sensor4) == 1));
-        }
-        else if (digitalRead(static_cast<uint8_t>(sensores::comutador)) == 0)
-        {
-            Serial.println("Se ha detenido el proceso");
-        }
-        digitalWrite(static_cast<uint8_t>(sensores::Eletrovalvula), HIGH);
-    }
-
     void loop()
     {
-        Serial.print("Peso: ");
-        Serial.print(balanza.get_units(20), 3);
-        Serial.println(" kg");
-        delay(500);
-        run.peso = balanza.get_units(20);
-        if((0 <= run.peso && run.peso <= 0.5) && run.ejecucion == true)
+        if (var.conmutador)
         {
-            Serial.println("Abriendo eletrovalvula");
-            digitalWrite(static_cast<uint8_t>(sensores::Eletrovalvula), HIGH);
-            while (run.ejecucion && (0 <= run.peso && run.peso <= 0.5))
+            run.Encender(var.array);
+            run.llenado_nivel(var.array, false);
+        }
+        else if(Serial.available() > 0)
+        {
+            auto comuntar_master = (char)Serial.read();
+            if (comuntar_master == 't')
             {
-                switch (Sensor)
-                {
-                case sensores::Sensor1:
-                    Serial.println("Se a activado el sensor # 1.");
-                    while (Sensor == sensor::Sensor1)
-                    {
-                        // Verificar sensor.
-                    }
-                    break;
-                case sensores::Sensor2:
-                    Serial.println("Se a activado el sensor # 2.");
-                    while (Sensor == sensor::Sensor2)
-                    {
-                        // Verificar sensor.
-                    }
-                case sensores::Sensor3:
-                    Serial.println("Se a activado el sensor # 3.");
-                    while(Sensor == sensor::Sensor3)
-                    {
-                        //Verificar sensor.
-                    }
-                    break;
-                case sensores::Sensor4:
-                    Serial.println("Se a activado el sensor # 4.");
-                    Serial.println("Abrir electrovalvula");
-                    while (Sensor == sensor::Sensor4)
-                    {
-                        Sensores_estado_6();
-                    }
-                    break;
-                case sensores::Sensor5:
-                    Serial.println("Se a activado el sensor # 5.");
-                    if (digitalRead(static_cast<uint8_t>(sensores::comutador)) == 1)
-                    {
-                        Serial.println("Abrir la valvula manual. Nivel del 90% alcanzado");
-                        digitalWrite(static_cast<uint8_t>(sensores::Alerta_visual), HIGH);
-                        do
-                        {
-                            Serial.println("Abrir Enserió.");
-                            if(run.Valvula_manual) while (Sensor == sensor::Sensor5);
-                        } 
-                        while (not(run.Valvula_manual));
-                    }
-                    break;
-                default:
-                    Operaciones.Valores(run.peso);
-                    break;
-                delay(1000);
-                }
+                var.conmutador = true;
+                Serial.println("Conmutador: ON");
+                Serial.readString();
             }
         }
-        else Serial.println("Se debe de abrir la Valvula manual");
     }
-}; // namespace Correr
+};

@@ -6,6 +6,21 @@
 
 #define max_value 10
 
+enum class _sensor_
+{
+    Sensor0 = 1,
+    Sensor1 = 2,
+    Sensor2 = 3,
+    Sensor3 = 4,
+    Sensor4 = 5,
+    Sensor5 = 6,
+    comutador = 7,
+    Eletrovalvula = 13,
+    Alerta_visual = 12
+};
+
+typedef enum _sensor_ sensor;
+
 struct Variables_Calibracion
 {
     const short Calculo_Peso{10};

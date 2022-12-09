@@ -5,7 +5,6 @@
 //Elementos de ejecuión:
 #include "..\include\Set_up.h"
 #include "..\include\Correr.h"
-#include "..\include\Sensores.h"
 
 /**
  * @file Proyecto de Taller de Ingeniería.
@@ -24,7 +23,7 @@
  */
 void setup() 
 {
-  Correr2::setup();
+  Correr::setup();
 }
 
 
@@ -33,7 +32,7 @@ void setup()
  */
 void loop() 
 {
-  Correr2::loop();
+  Correr::loop();
 }
 
 /**
