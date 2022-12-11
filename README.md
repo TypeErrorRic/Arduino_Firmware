@@ -1,5 +1,5 @@
-# Regresión Cuadrática:
-Este programa se encarga de encontrar el mejor ajuste de un grupo de pares ordenados de números en una curva cuadratica, devolviendo los parametros correspondiente para su análisis.
+# Sistema del Tanque:
+Este repositorio contiene todas las funciones y programas que se utilizan para 
 
 Este programa está diseñado para funcionar en la plataforma de Arduino.
 
