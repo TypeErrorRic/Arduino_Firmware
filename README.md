@@ -23,8 +23,6 @@ Este repositorio contiene todas las funciones y programas que se utilizan para l
 
     La implemetnación de cada uno de los anteriores archivos se encuentra en la carpate src.
 
---> 
-
 
 Este programa está diseñado para funcionar en la plataforma de Arduino.
 
