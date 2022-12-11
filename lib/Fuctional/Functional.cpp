@@ -21,6 +21,7 @@ void Functional::vericacion_vaciado(bool array[5])
         Serial.println("Vaciar tanque Primero.");
         ejecucion = false;
         abrir_valvula();
+        delay(5000);
         Serial.println("Cerrar Valvula manual.");
         while (cerrar_valvula(array))
             ;
@@ -57,6 +58,7 @@ bool Functional::cerrar_valvula(bool array[5])
 
 char &Functional::abrir_valvula()
 {
+    digitalWrite(sensor.ELECTROVALVULA, LOW);
     Serial.println("Abrir la valvula manual.");
     while (aux != 'a' and Valvula_manual == false)
     {
@@ -70,8 +72,6 @@ char &Functional::abrir_valvula()
                 if (not(pass_f))
                     Serial.println("Valvula Manual: ON.");
                 digitalWrite(sensor.VALVULA_MANUAL, HIGH);
-                digitalWrite(sensor.ELECTROVALVULA, LOW);
-                delay(5000);
                 break;
             }
             else if (aux == '5')
@@ -121,7 +121,9 @@ bool Functional::estado_90(bool array[5])
                         pass_f = false;
                         conmutador = false;
                         ejecucion = false;
+                        array[4] = false;
                         delay(5000);
+                        Serial.println("Cerrar Valvula Manual.");
                         while(Valvula_manual) cerrar_valvula(array);
                     }
                 }
@@ -199,6 +201,7 @@ char &Functional::Sensores_estado_6(bool array[5], bool descender)
 
 void Functional::llenado_nivel(bool array[5], bool descender)
 {
+    bool value{false};
     estados state = DESACTIVADO;
     while (ejecucion)
     {
@@ -299,6 +302,8 @@ void Functional::llenado_nivel(bool array[5], bool descender)
             {
                 conmutador = false;
                 Serial.println("Se ha detenido el proceso. Conmutador apagado.");
+                digitalWrite(sensor.ELECTROVALVULA, LOW);
+                digitalWrite(sensor.CONUMTADOR, LOW);
                 ejecucion = false;
             }
             else if (aux == 't' && descender)
@@ -309,16 +314,45 @@ void Functional::llenado_nivel(bool array[5], bool descender)
         if (ejecucion == false && not(descender) && conmutador)
         {
             Serial.println("Error: Disminucion del tanque");
-            digitalWrite(sensor.ELECTROVALVULA, LOW);
-            digitalWrite(sensor.CONUMTADOR, LOW);
-            ejecucion = true;
+            if(value == true)
+            {
+                digitalWrite(sensor.ELECTROVALVULA, LOW);
+                digitalWrite(sensor.CONUMTADOR, LOW);
+                conmutador = false;
+                ejecucion = false;
+                value = false;
+            }
+            else
+            {
+                digitalWrite(sensor.CONUMTADOR, LOW);
+                delay(3000);
+                digitalWrite(sensor.CONUMTADOR, HIGH);
+                ejecucion = true;
+            }
+            value = true;
         }
         else if (ejecucion == false && (descender) && conmutador)
         {
             Serial.println("Error: Aumento del tanque");
-            digitalWrite(sensor.ELECTROVALVULA, LOW);
-            digitalWrite(sensor.CONUMTADOR, LOW);
-            ejecucion = true;
+            if (value == true)
+            {
+                conmutador = false;
+                digitalWrite(sensor.ELECTROVALVULA, LOW);
+                digitalWrite(sensor.CONUMTADOR, LOW);
+                for (int i = 0; i < 5; i++)
+                    array[i] = false;
+                Serial.println("Tanque vaceado");
+                ejecucion = false;
+                value = false;
+            }
+            else
+            {
+                digitalWrite(sensor.CONUMTADOR, LOW);
+                delay(3000);
+                digitalWrite(sensor.CONUMTADOR, HIGH);
+                ejecucion = true;
+            }
+            value = true;
         }
     }
 }

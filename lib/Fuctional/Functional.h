@@ -5,7 +5,7 @@
 
 enum estados
 {
-    DESACTIVADO, //Estado desctivado del sensor.
+    DESACTIVADO, //Estado desactivado del sensor.
     ESTADO20, //Se activo el sensor de 20%
     ESTADO40, //Se acivo el sensor de 40%
     ESTADO60, //Se activo el sensor de 60%
