@@ -12,3 +12,8 @@ lib/**/*.md
 #Ignorar los Avisos de include que terminen en .md:
 include/*.md
 !README.md
+
+#Ignorar paquetes:
+server/*.json
+server/node_modules/
+
