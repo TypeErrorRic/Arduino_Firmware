@@ -1,10 +1,13 @@
 //Librerías:
 #include <Arduino.h>
+/*
 #include <Regresion_Cuadratica.h> 
 #include <Caudal.h>
 //Elementos de ejecuión:
 #include "..\include\Set_up.h"
 #include "..\include\Correr.h"
+*/
+#include <SoftwareSerial.h>
 
 /**
  * @file Proyecto de Taller de Ingeniería.
@@ -21,9 +24,16 @@
 /**
  * @brief Función que se encarga de configurar los parametros inciales de las funciones.
  */
+
+namespace Variables{
+  SoftwareSerial miBT(5, 6);
+};
+
 void setup() 
 {
-  Correr::setup();
+  Serial.begin(9600);
+  Serial.println("listo");
+  Variables::miBT.begin(38400);
 }
 
 
@@ -32,7 +42,8 @@ void setup()
  */
 void loop() 
 {
-  Correr::loop();
+  if(Variables::miBT.available()) Serial.write(Variables::miBT.read());
+  if(Serial.available()) Variables::miBT.write(Serial.read());
 }
 
 /**

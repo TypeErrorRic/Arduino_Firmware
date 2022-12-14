@@ -1,5 +1,5 @@
 #include <Arduino.h>
-
+/*
 int out = 0;
 byte in = 0;
 byte pinOut = 10;
@@ -29,3 +29,4 @@ void loop()
     valor = analogRead(A0);
     delay(1);
 }
+*/
