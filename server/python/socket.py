@@ -1,3 +1,3 @@
-class conetion:
+class socket:
     def __init__(self):
-        self.param = 0
+        pass
