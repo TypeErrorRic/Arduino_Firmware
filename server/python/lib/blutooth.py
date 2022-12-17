@@ -1,11 +1,15 @@
 import serial
 import keyboard as k
 
+
 class conectiones:
     velocidad = 9600
 
-    def __init__(self, port) -> None:
+    def __init__(self, port: str) -> None:
         self.port = port
+
+    async def conection(self):
+        pass
 
     def set_up(self) -> serial:
         try:
@@ -19,17 +23,19 @@ class conectiones:
             print("Done")
 
     def loop(self) -> None:
+        self.mostrar_puertos()
         ser = self.setup()
+        self.mostrar_puertos()
         while True:
             if k.is_pressed('y'):
-                ser.write(b'y')
-            if k.is_pressed('n'):
+               ser.write(b'y')
+            elif k.is_pressed('n'):
                 ser.write(b'n')
             elif k.is_pressed('ENTER'):
                 self.salir(ser)
                 break
     
-    def salir(self, ser) -> None:
+    def salir(self, ser: serial) -> None:
         try:
             ser.close()
         except:
