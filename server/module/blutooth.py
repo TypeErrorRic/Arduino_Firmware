@@ -2,7 +2,7 @@ import serial
 import keyboard as k
 
 
-class conectiones:
+class Blutooth:
     velocidad = 9600
 
     def __init__(self, port: str) -> None:

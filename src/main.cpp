@@ -25,7 +25,8 @@
  * @brief Función que se encarga de configurar los parametros inciales de las funciones.
  */
 
-namespace Variables{
+namespace Variables
+{
   SoftwareSerial miBT(5, 6);
 };
 
@@ -34,6 +35,7 @@ void setup()
   Serial.begin(9600);
   Serial.println("listo");
   Variables::miBT.begin(38400);
+  pinMode(13,LOW);
 }
 
 
@@ -42,8 +44,12 @@ void setup()
  */
 void loop() 
 {
-  if(Variables::miBT.available()) Serial.write(Variables::miBT.read());
-  if(Serial.available()) Variables::miBT.write(Serial.read());
+  if(Variables::miBT.available())
+  { 
+    char aux = (char)Variables::miBT.read();
+    if(aux == '1') digitalWrite(13, HIGH);
+    else if (aux == '2') digitalWrite(13, LOW);
+  }
 }
 
 /**

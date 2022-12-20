@@ -1,6 +1,6 @@
 #Ignorar archivos:
 .pio/
-.vscode/
+**.vscode/
 test/
 Doxyfile
 platformio.ini
@@ -14,6 +14,9 @@ include/*.md
 !README.md
 
 #Ignorar paquetes:
-server/*.json
-server/node_modules/
+cient/*.json
+client/node_modules/
+
+#Ignore pycache:
+server/**_pycache__
 
