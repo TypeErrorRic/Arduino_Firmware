@@ -1,15 +1,48 @@
-#include "..\client\include\Client.h"
+#include "..\include\Client.h"
 
-Client::Client()
+Client::Client(): buffer{0}
 {
-    std::cout << "Conectando al servidor..." << std::endl;
-    WSAStartup(MAKEWORD(2, 0), &WSAData);
-    server = socket(AF_INET, SOCK_STREAM, 0);
-    addr.sin_addr.s_addr = inet_addr("192.168.0.8");
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(5555);
-    connect(server, (SOCKADDR *)&addr, sizeof(addr));
-    std::cout << "Conectado al Servidor!" << std::endl;
+    WSADATA wsaData;
+    int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if (iResult != NO_ERROR)
+    {
+        wprintf(L"Inicialización fallida: %d\n", iResult);
+    }
+    //----------------------
+    // Create a SOCKET for connecting to server
+    SOCKET ConnectSocket;
+    ConnectSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (ConnectSocket == INVALID_SOCKET)
+    {
+        wprintf(L"socket function failed with error: %ld\n", WSAGetLastError());
+        WSACleanup();
+    }
+    //----------------------
+    // The sockaddr_in structure specifies the address family,
+    // IP address, and port of the server to be connected to.
+    clientService.sin_family = AF_INET;
+    clientService.sin_addr.s_addr = inet_addr("127.0.0.1");
+    clientService.sin_port = htons(27015);
+
+    //----------------------
+    // Connect to server.
+    iResult = connect(ConnectSocket, (SOCKADDR *)&clientService, sizeof(clientService));
+    if (iResult == SOCKET_ERROR)
+    {
+        wprintf(L"Sucedio un error en la conexión: %ld\n", WSAGetLastError());
+        iResult = closesocket(ConnectSocket);
+        if (iResult == SOCKET_ERROR)
+            wprintf(L"ERROR: %ld\n", WSAGetLastError());
+        WSACleanup();
+    }
+
+    wprintf(L"Connected to server.\n");
+
+    iResult = closesocket(ConnectSocket);
+    if (iResult == SOCKET_ERROR)
+    {
+        wprintf(L"ERROR DE CONEXIÓN FINALIZADA: %ld\n", WSAGetLastError());
+    }
 }
 
 Client::~Client()

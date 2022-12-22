@@ -12,7 +12,7 @@
  * 
  */
 
-#include <Matrices.h> //Libreria privada que incluye la matriz de regresión cuadratica.
+#include "Matrices.h" //Libreria privada que incluye la matriz de regresión cuadratica.
 
 class Regresion_Cuadratica: public Matrices
 {

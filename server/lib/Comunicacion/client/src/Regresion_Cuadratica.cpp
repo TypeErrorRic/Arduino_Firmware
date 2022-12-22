@@ -101,9 +101,9 @@ bool Regresion_Cuadratica::Gauss_Jordan()
                     break;
                 }
             }
-            else if(Matriz[i][0] == 0 and Matriz[i][1] == 0)
+            else if(Matriz[i][0] == 0 && Matriz[i][1] == 0)
             {
-                if (Matriz[2][0] != 0  and Matriz[2][1] != 0)
+                if (Matriz[2][0] != 0  && Matriz[2][1] != 0)
                 {
                     Intercambiar(2, i);
                     break;
@@ -114,13 +114,13 @@ bool Regresion_Cuadratica::Gauss_Jordan()
         //Test(); /* Habilitar en caso de comprobar resulstado */
         for (int i = 1; i < 3; i++) Segunda_Operacion(0, i); // Primer argumento es la fila del pivote. El segundo es donde se aplica
         //Test(); /* Habilitar en caso de comprobar resulstado */
-        if (Matriz[1][1] != 1 and Matriz[1][1] != 0) Multiplicacion_Const((1 / Matriz[1][1]), 1);
-        else if (Matriz[1][1] == 0 and Matriz[2][1] != 0) Intercambiar(1, 2);
-        if(not(Segunda_Operacion(1, 2))) return false;
-        if (Matriz[2][2] != 1 and Matriz[2][2] != 0) Multiplicacion_Const((1 / Matriz[2][2]), 2);
+        if (Matriz[1][1] != 1 && Matriz[1][1] != 0) Multiplicacion_Const((1 / Matriz[1][1]), 1);
+        else if (Matriz[1][1] == 0 && Matriz[2][1] != 0) Intercambiar(1, 2);
+        if(!(Segunda_Operacion(1, 2))) return false;
+        if (Matriz[2][2] != 1 && Matriz[2][2] != 0) Multiplicacion_Const((1 / Matriz[2][2]), 2);
         else if (Matriz[2][2] == 0) return false;
         // Test(); /* Habilitar en caso de comprobar resulstado */
-        if(not(Segunda_Operacion(1, 0)) and (Matriz[0][2] == 0) and (Matriz[1][2] == 0)) return true;
+        if(!(Segunda_Operacion(1, 0)) && (Matriz[0][2] == 0) && (Matriz[1][2] == 0)) return true;
         Segunda_Operacion(2, 0);
         Segunda_Operacion(2, 1);
         // Test(); /* Habilitar en caso de comprobar resultado */
@@ -179,18 +179,13 @@ void Regresion_Cuadratica::Calcular()
     if (Gauss_Jordan())
     {
         Num_test = 0;
-        Serial.print("[");
-        Serial.print(Get_valor_a());
-        Serial.print(", ");
-        Serial.print(Get_valor_x1());
-        Serial.print(", ");
-        Serial.print(Get_valor_x2());
-        Serial.println("] tal que: [C,X,X^2]");
+        std::cout << "[" << Get_valor_a() << ", " << Get_valor_x1() << ", "
+            << Get_valor_x2() << "] tal que: [C,X,X^2]" << std::endl;
         Realizar = true;
     }
     else
     {
-        Serial.println("Error: Reiniciar.");
+        std::cout << "Error: Reiniciar." << std::endl;
         Num_test = 0;
         Realizar = false;
     }
@@ -202,18 +197,17 @@ void Regresion_Cuadratica::Calcular()
  */
 void Regresion_Cuadratica::Test()
 {
-    Serial.print("Teste #: ");
-    Serial.println(Num_test);
+    std::cout << "Teste #: " << std::endl;
+    std::cout << Num_test << std::endl;
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 4; j++)
         {
-            Serial.print(Matriz[i][j]);
-            Serial.print("  ");
+            std::cout << Matriz[i][j] << std::endl;
         }
-        Serial.println(" ");
+        std::cout << std::endl;
     }
-    Serial.println("#################");
+    std::cout << "#################" << std::endl;
     Num_test++;
 }
 
@@ -224,7 +218,7 @@ void Regresion_Cuadratica::Test()
 void Regresion_Cuadratica::reset()
 {
     Realizar = true;
-    Serial.println("Inicialización de Matriz Correcto.");
+    std::cout << "Inicialización de Matriz Correcto." << std::endl;
 }
 
 

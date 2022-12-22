@@ -1,11 +1,10 @@
-#include "client\include\Client.h"
+#include "..\include\Client.h"
 
-int main()
+int wmain()
 {
     Client *Cliente = new Client();
     while (true)
     {
-        Cliente->Enviar();
         Cliente->Recibir();
     }
     delete Cliente;
