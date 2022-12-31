@@ -1,16 +1,17 @@
 #ifndef FUNCTIONAL_H
 #define FUNCTIONAL_H
 
-#include <Arduino.h>
+#include <Caudal.h>
+#include <Regresion_Cuadratica.h>
 
 enum estados
 {
-    DESACTIVADO, //Estado desactivado del sensor.
-    ESTADO20, //Se activo el sensor de 20%
-    ESTADO40, //Se acivo el sensor de 40%
-    ESTADO60, //Se activo el sensor de 60%
-    ESTADO80, //Se activo el sensor de 80%
-    ESTADO90  //Se activo el sensor de 90%
+    DESACTIVADO,//Estado desactivado del sensor.
+    ESTADO20,   //Se activo el sensor de 20%
+    ESTADO40,   //Se acivo el sensor de 40%
+    ESTADO60,   //Se activo el sensor de 60%
+    ESTADO80,   //Se activo el sensor de 80%
+    ESTADO90    //Se activo el sensor de 90%
 };
 
 struct sensores
@@ -24,6 +25,7 @@ struct sensores
 class Functional
 {
     private:
+        Caudal &caudal;
         bool& ejecucion; //Está variable define si se ejectua el llenado.
         bool& Valvula_manual; //Está variable define si la valvula manual está abierto o no.
         bool &conmutador; // Está variable define si el conmutador está encendido o no.
@@ -36,12 +38,13 @@ class Functional
         bool estado_90(bool array[5]);
         char &Sensores_estado_6(bool array[5], bool descender);
         bool estado_20(bool array[5]);
+        //void Regresion(Regresion_Cuadratica &Cuadratica);
 
     public:
-        Functional(bool &ejecucion, bool &Valvula, bool& conmutador) : 
-            ejecucion{ejecucion}, Valvula_manual{Valvula}, conmutador{conmutador}, 
+        Functional(Caudal& caudal, bool &ejecucion, bool &Valvula, bool& conmutador) : 
+            caudal(caudal), ejecucion{ejecucion}, Valvula_manual{Valvula}, conmutador{conmutador}, 
             aux{'\0'}, pass_f{false}, exceso{false}{}
-        void init();
+        void init(float array[3], float &altura);
         void vericacion_vaciado(bool array[5]);
         char& abrir_valvula();
         bool cerrar_valvula(bool array[5]);

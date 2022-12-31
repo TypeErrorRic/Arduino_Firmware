@@ -1,8 +1,9 @@
 #ifndef CORRER_H
 #define CORRER_H
 
-#include "Config.h"
+#include "Lecture_data.h"
 #include <Caudal.h>
+#include <Memoria_no_volatil.h>
 
 struct Variables_Correr
 {
@@ -16,6 +17,7 @@ namespace Correr
 {
     void setup();
     void loop();
+    void calibracion_memoria(Memoria_no_volatil& memoria);
 };
 
 #endif

@@ -13,23 +13,21 @@
  */
 
 #include <Arduino.h>
-#include <Memoria_no_volatil.h>
 #include "Config.h"
 
 static constexpr unsigned int Nums{5};
 
 // Testeo:
-namespace Testeo
+namespace Lectura_data
 {
     //Banco de Pruebas:
     //Variables:
     const float x[Nums]{-2, 1, 4, 3, 0};
     const float y[Nums]{5, 4, 1, -1, 0};
+    const short buffer{20}; //Capacidad maxima de almacenamiento.
     //Funciones:
-    float Lectura_events();
-    void Serial_events(float &num1, float &num2, bool& realizar);
-    //int numeros();
-    void Valores(float &num1, float &num2);
-    void memorias(const Variables_Celda_Carga &guardar);
+    int Lectura_events_numerics(float& data);
+    char *Asignacion_strings();
+    void Captura_eventos();
 }
 #endif

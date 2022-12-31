@@ -2,16 +2,19 @@
 
 sensores Functional::sensor{};
 
-void Functional::init()
+void Functional::init(float array[3], float &altura)
 {
+    //Inicialicializando puertos:
     pinMode(sensor.ELECTROVALVULA, OUTPUT);
     pinMode(sensor.VALVULA_MANUAL, OUTPUT);
     pinMode(sensor.ALARMA, OUTPUT);
     pinMode(sensor.CONUMTADOR, OUTPUT);
+    //Inicializando estado de los puertos:
     digitalWrite(sensor.ELECTROVALVULA, LOW);
     digitalWrite(sensor.VALVULA_MANUAL, LOW);
     digitalWrite(sensor.ALARMA, LOW);
     digitalWrite(sensor.CONUMTADOR, LOW);
+    caudal.set_valores(array, altura);
 }
 
 void Functional::vericacion_vaciado(bool array[5])
@@ -364,3 +367,68 @@ void Functional::Encender(bool array[5])
     digitalWrite(sensor.CONUMTADOR, HIGH);
     vericacion_vaciado(array);
 }
+/*
+void Functional::Regresion(Regresion_Cuadratica &Matriz)
+{
+    int contador_num{0};
+    // Bucle principal de toma de datos:
+    float aux{};
+    do
+    {
+        delay(1000);
+        aux = contador_num > 0 ? Celda_Carga.Valores.y[contador_num - 1] : 0;
+        contador_num++;
+        // Si se ha realizado la toma de valores con un patron incapaz de ser acomodados en una curva cuadratica. Lazara error.
+        if (Matriz.get_Realizar())
+        {
+            Serial.print(contador_num);
+        }
+    } while (Matriz.Update(Celda_Carga.Valores.y[contador_num - 1]));
+    balanza.set_scale(Celda_Carga.Valores.suma_valores);
+    do
+    {
+        if (digitalRead(static_cast<uint8_t>(_sensor_::Sensor5)))
+        {
+            Serial.println("Se ha estableciod el valor # 5");
+            Matriz.Update_x(balanza.get_units(20));
+            Calibrar.velocidad = ((Celda_Carga.Valores.peso_total * Celda_Carga.densidad) / 9.8) / Calibrar.time;
+            break;
+        }
+        else if (digitalRead(static_cast<uint8_t>(_sensor_::Sensor4)))
+        {
+            Serial.println("Se ha estableciod el valor # 4");
+            Matriz.Update_x(balanza.get_units(20));
+        }
+        else if (digitalRead(static_cast<uint8_t>(_sensor_::Sensor3)))
+        {
+            Serial.println("Se ha estableciod el valor # 3");
+            Matriz.Update_x(balanza.get_units(20));
+        }
+        else if (digitalRead(static_cast<uint8_t>(_sensor_::Sensor2)))
+        {
+            Serial.println("Se ha estableciod el valor # 2");
+            Matriz.Update_x(balanza.get_units(20));
+        }
+        else if (digitalRead(static_cast<uint8_t>(_sensor_::Sensor1)))
+        {
+            Serial.println("Se ha estableciod el valor # 1");
+            Matriz.Update_x(balanza.get_units(20));
+        }
+    } while (Sensor != sensor::Sensor5);
+    delay(1000);
+    digitalWrite(LED_BUILTIN, HIGH);
+    // Si se ha realizado la toma de valores con un patron incapaz de ser acomodados en una curva cuadratica. Lazara error.
+    if (Matriz.get_Realizar())
+    {
+        Matriz.get_Matriz();
+        Matriz.Calcular();
+        Serial.println("Configuración realizada correctamente");
+        Celda_Carga.Valores.valores[0] = Matriz.Get_valor_x2();
+        Celda_Carga.Valores.valores[1] = Matriz.Get_valor_x1();
+        Celda_Carga.Valores.valores[2] = Matriz.Get_valor_a();
+    }
+    else
+        Serial.print("Reiniciar.");
+    delay(1000);
+}
+*/

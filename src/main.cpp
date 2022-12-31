@@ -1,41 +1,58 @@
-//Librerías:
-#include <Arduino.h>
-/*
-#include <Regresion_Cuadratica.h> 
-#include <Caudal.h>
-//Elementos de ejecuión:
-#include "..\include\Set_up.h"
-#include "..\include\Correr.h"
-*/
-#include <SoftwareSerial.h>
-
 /**
  * @file Proyecto de Taller de Ingeniería.
  * @author Ricardo Pabón Serna.(ricardo.pabon@correounivalle.edu.co)
  * @brief Este programa se encarga de realizar el ajuste de un grupo de pares ordenados en una
  *        una curva cuadratica, devolviendo los parametros de la curva para su correspondiente análisis.
  * @version 0.1
- * @date 2022-10-17 
+ * @date 2022-10-17
+ *
+ *
+ * @include {lib} Caudal.h
+ * @include {lib} Functional.h
+ * @include {lib} Memoria_no_volatil.h
+ * @include {std} Arduino.h
+ * @include {std} SoftwareSerial.h
+ *
  *
  * @copyright Copyright (c) 2022
  */
 
+//Elementos de ejecuión:
+#include "..\include\Correr.h"
+#include <SoftwareSerial.h>
 
 /**
  * @brief Función que se encarga de configurar los parametros inciales de las funciones.
  */
 
-namespace Variables
-{
-  SoftwareSerial miBT(5, 6);
-};
-
 void setup() 
 {
   Serial.begin(9600);
-  Serial.println("listo");
-  Variables::miBT.begin(38400);
-  pinMode(13,LOW);
+  Serial.println("H05ricF45");
+  unsigned long time = millis();
+  unsigned long tiempo2{0}; 
+  bool calibrar{true};
+  while (calibrar)
+  {
+    tiempo2 = millis();
+    if(tiempo2 <= (time+5000))
+    {
+      while (Serial.available())
+      {
+        String cadena = Serial.readString();
+        if(cadena == "HGTCh4rGu")
+          Serial.println(cadena);
+        else
+        {
+          calibrar = false;
+          Serial.println("");
+        }
+      }
+      tiempo2 = millis();
+    }
+    else
+      break;
+  }
 }
 
 
@@ -44,12 +61,7 @@ void setup()
  */
 void loop() 
 {
-  if(Variables::miBT.available())
-  { 
-    char aux = (char)Variables::miBT.read();
-    if(aux == '1') digitalWrite(13, HIGH);
-    else if (aux == '2') digitalWrite(13, LOW);
-  }
+  //if(list != nullptr) Serial.println(list);
 }
 
 /**

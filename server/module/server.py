@@ -1,22 +1,5 @@
 import socket
-import time
 
-def Validacion():
-    def wrapper(cls):
-        class ejecucuion(cls):
-            def loop(self):
-                if super().verificacion(): 
-                    print("Empiece a escribir")
-                    with super().sock_com() as com: 
-                        while super().Update(com): pass
-                else:
-                    print("salio")
-                    super().__del__()
-        return ejecucuion
-    return wrapper
-
-
-@Validacion()
 class server():
 
     conexion : socket.socket
@@ -27,7 +10,8 @@ class server():
 
     def __new__(cls, port: int) -> object:
         if cls._isinstance is None:
-            cls.my_socket =socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            cls.my_socket = socket.socket(
+                socket.AF_INET, socket.SOCK_STREAM)
             cls.my_socket.bind(('127.0.0.1', port))
             cls.my_socket.listen(5)
             cls.my_socket.settimeout(40)
@@ -39,6 +23,7 @@ class server():
         try:
             self.conexion, self.addr = self.my_socket.accept()
             print(f"Nueva conexion establecida en la dirreción {self.addr}")
+            #self.conexion.sendall(b"Hola mundo")
         except socket.timeout:
             print("Conexión no realizada")
             self._isinstance = None
@@ -53,8 +38,12 @@ class server():
         else:
             print("Conexión no realizada correctamente")
 
-    def recibir(self, con: socket.socket) -> bytes:
-        return con.recv(self.buffer)
+    def recibir(self, con: socket.socket, data: bytes) -> str:
+        while data == b'':
+            data, address = con.recvfrom(self.buffer)
+            if data != b'': 
+                print(f"Recivido desde: {address}")
+        return repr(data)
 
     def Update(self, con: socket.socket) -> bool:
         self.enviar(con)
@@ -73,6 +62,18 @@ class server():
         else:
             return True
 
+    def loop(self):
+        if self.verificacion():
+            print("Empiece a escribir")
+            with self.sock_com() as com:
+                massage: bytes = b''
+                #com.sendall(b"Mi primer mensaje en servidor")
+                print("Reciviendo datos: ")
+                print("Mensaje Recivido: {}". format(self.recibir(com, massage)))
+        else:
+            self.__del__()
+
+
 if __name__ == "__main__":
-    servidor = server(27015)
+    servidor = server(8000)
     servidor.loop()
