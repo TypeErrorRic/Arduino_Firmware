@@ -125,7 +125,7 @@ float Caudal::Cal_peso()
 }
 
 //Configura los valores inciales para calibrar la celdad de carga.
-void Caudal::calibracion_escala(long &offset, float &sum, bool realizar)
+bool Caudal::calibracion_escala(long &offset, float &sum, bool& realizar)
 {
   if (offset == 0)
   {
@@ -146,7 +146,9 @@ void Caudal::calibracion_escala(long &offset, float &sum, bool realizar)
         sum += array[i % 10];
         delay(100);
       }
+      return true;
     }
     Serial.println(balanza.get_value(10));
   }
+  return false;
 }

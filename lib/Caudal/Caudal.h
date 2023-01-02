@@ -38,7 +38,7 @@ class Caudal
         Caudal(const float& densidad, const float &peso, Variables_Guardar &variables, const float &teoric_caudal);
         void set_valores(float valores[3], float& altura);
         bool& Valores();
-        static void calibracion_escala(long &offset, float &sum, bool realizar);
+        static bool calibracion_escala(long &offset, float &sum, bool& realizar);
 };
 
 #endif

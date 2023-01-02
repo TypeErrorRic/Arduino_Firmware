@@ -19,7 +19,7 @@
 
 //Elementos de ejecuión:
 #include "..\include\Correr.h"
-#include <SoftwareSerial.h>
+
 
 /**
  * @brief Función que se encarga de configurar los parametros inciales de las funciones.
@@ -41,27 +41,35 @@ void setup()
       {
         String cadena = Serial.readString();
         if(cadena == "HGTCh4rGu")
+        {
           Serial.println(cadena);
+          break;
+        }
         else
         {
           calibrar = false;
-          Serial.println("");
+          break;
         }
       }
       tiempo2 = millis();
     }
     else
+    {
+      calibrar = false;
       break;
+    }
   }
+  Serial.println("Inicializado");
+  Correr::setup();
+  Correr::calibracion(calibrar);
 }
-
 
 /**
  * @brief Bucle incial de ejecución.
  */
 void loop() 
 {
-  //if(list != nullptr) Serial.println(list);
+  Correr::loop();
 }
 
 /**

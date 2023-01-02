@@ -1,1 +1,0 @@
-len(list_y) != self.size

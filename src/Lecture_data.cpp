@@ -16,6 +16,7 @@ static int dataReal{0}, dataDecimal{0}, dataPow{1};
 static bool isDecimalStage{false}, validacion{true}, validacion1{true}, validacion2{true};
 static unsigned short contador{0};
 static bool siguiente{true};
+float data{0};
 /**
  * @brief Ambito de Teseto.
  */
@@ -26,17 +27,18 @@ namespace Lectura_data
      *
      * @return float
      */
-    int Lectura_events_numerics(float &data)
+    void Lectura_events_numerics(char* array, short& size)
     {
-        digitalWrite(LED_BUILTIN, HIGH);
         const unsigned short int Size{6};
-        while (Serial.available() > 0)
-        {
-            digitalWrite(LED_BUILTIN, LOW);
-            char aux = (char)Serial.read();
+        short count{0};
+        char aux{};
+        while(count <= size) {
+            if(count < size)
+                aux = array[count];
             // Captura los datos siempre y cuando no pase los caracteres guardados y no sea el caracter un salto de linea.
-            if (aux != '\n' && contador < Size - 1)
+            if (count < size && contador < Size - 1)
             {
+                count++;
                 // Se encagara de detectar si es un número decimal.
                 if ((aux == '.' || aux == ',') && validacion1 && contador != 0)
                 {
@@ -58,17 +60,17 @@ namespace Lectura_data
                     }
                     contador++;
                 }
-                // Se encarga de mostrar por pantalla nos caracteres no validos.
+                // Se encarga de mostrar por pantalla los caracteres no validos.
                 else
                 {
+                    data = 0;
                     validacion = false;
                 }
             }
             // Se encarga de imprimir el número escrito.
-            else if ((aux == '\n' || contador == Size) && validacion)
+            else if ((size = count || contador == Size) && validacion)
             {
                 data = (float)dataReal + (float)dataDecimal / dataPow;
-                Serial.println(data);
                 dataReal = 0;
                 dataDecimal = 0;
                 dataPow = 1;
@@ -80,7 +82,7 @@ namespace Lectura_data
                 break;
             }
             // Se encarga de indicar que se ha incluido valores no númericos; por lo que, ignora la toma de datos.
-            else if (not(validacion) && (aux == '\n' || contador == Size))
+            else if (not(validacion) && (size = count || contador == Size))
             {
                 dataReal = 0;
                 dataDecimal = 0;
@@ -90,39 +92,79 @@ namespace Lectura_data
                 validacion1 = true;
                 validacion2 = true;
                 validacion = true;
-                return -1;
+                break;
             }
         }
-        return 0;
     }
 
-    char *Asignacion_strings()
+    char *Asignacion_strings(short& size)
     {
-        if (Variables::miBT.available())
+        if (Serial.available() > 0)
         {
-            Serial.println("Conectado");
-            String datos = Variables::miBT.readString();
-            if(datos.length() > 2)
+            String datos = Serial.readString();
+            if(datos.length() > 3)
             {
                 char *variable = new char[datos.length() - 2];
                 datos.toCharArray(variable, (datos.length() - 1));
-                for (int unsigned i = 0; i < (datos.length() - 2); i++)
-                {
-                    Serial.print(variable[i]);
-                }
-                Serial.println(' ');
-                delete[] variable;
+                size = datos.length() - 2;
+                return variable;
             }
         }
         return nullptr;
     }
-    void Captura_eventos()
+
+    String* Captura_eventos(short& size)
     {
-        char * list;
+        char * list = nullptr;
+        short cantidad{1};
+        short Values[8] = {0,0,0,0,0,0,0,0};
+        Values[0] = 0;
         while(list == nullptr)
+            list = Asignacion_strings(size);
+        char variable = list[size - 2];
+        for(short i = (Values[0] + 1); i< size - 2 ; i++)
         {
-            list = Asignacion_strings();
+            if(list[i] == '/' && cantidad <= 5)
+            {
+                Values[cantidad] = i;
+                cantidad++;
+            }
         }
+        String *lista = new String [cantidad+1];
+        lista[0] = variable;
+        short indice = 0;
+        while(Values[indice] != size - 2 && cantidad != 1)
+        {
+            String aux = "";
+            if(Values[indice + 1] == 0)
+            {
+                Values[indice + 1] = size - 2;
+            }
+            for(short i = (Values[indice] + 1); i < Values[indice + 1]; i++)
+            {
+                aux += list[i];
+            }
+            lista[indice + 1] = aux;
+            indice++;
+        }
+        delete[] list;
+        size = cantidad;
+        return lista;
+    }
+
+    float Convertir_a_Numero(String numero)
+    {
+        short size = numero.length();
+        siguiente = true;
+        char *array = new char[size+1];
+        numero.toCharArray(array, (size+1));
+        while(siguiente)
+        {
+            data = 0;
+            Lectura_events_numerics(array, size);
+        }
+        delete[] array;
+        return data;
     }
 }
 

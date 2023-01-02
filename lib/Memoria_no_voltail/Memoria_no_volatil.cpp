@@ -13,7 +13,7 @@ Memoria_no_volatil::Memoria_no_volatil() : Function{true}, estado_memoria{false}
 {
     ID = (EEPROM.read(EEPROM.length() - 1) != 255) ? EEPROM.read(EEPROM.length() - 1) : 0;
     this->calVal_eepromAdress = 0;
-    this->names = Variables_Memoria::tara;
+    this->names = Variables_Memoria::Posicion;
     if (EEPROM[calVal_eepromAdress] != 255)
     {
         short int i = 0;
@@ -29,6 +29,7 @@ Memoria_no_volatil::Memoria_no_volatil() : Function{true}, estado_memoria{false}
     }
     if (EEPROM[size - 1] == 255)
         EEPROM[size - 1] = 1;
+    Serial.println(size_dato);
 }
 
 Memoria_no_volatil::~Memoria_no_volatil()
@@ -71,7 +72,7 @@ const int unsigned &Memoria_no_volatil::operator[](short orden)
     ID = EEPROM.read(EEPROM.length() - 1);
     int i{0};
     short contador{1};
-    while (contador <= ID and i < 50)
+    while (contador <= ID)
     {
         //Asignación en la posición index = 0;
         if (orden == 0 || EEPROM[0] == 255)
@@ -140,7 +141,10 @@ const int unsigned &Memoria_no_volatil::operator[](short orden)
     {
         // Asignación de nombres de la variables.
         if (orden == static_cast<short>(Variables_Memoria::tara))
-            this->names = Variables_Memoria::tara;
+        {
+            names = Variables_Memoria::tara;
+            Serial.println(calVal_eepromAdress);
+        }
         else if (orden == static_cast<short>(Variables_Memoria::peso_total))
             names = Variables_Memoria::peso_total;
         else if (orden == static_cast<short>(Variables_Memoria::radio_llave))
@@ -149,6 +153,12 @@ const int unsigned &Memoria_no_volatil::operator[](short orden)
             names = Variables_Memoria::valores_regresion;
         else if (orden == static_cast<short>(Variables_Memoria::suma_valores))
             names = Variables_Memoria::suma_valores;
+        else if (orden == static_cast<short>(Variables_Memoria::Posicion))
+            names = Variables_Memoria::Posicion;
+        else if (orden == static_cast<short>(Variables_Memoria::dias))
+            names = Variables_Memoria::dias;
+        else if (orden == static_cast<short>(Variables_Memoria::altura))
+            names = Variables_Memoria::altura;
     }
     return size_dato;
 }
@@ -156,32 +166,6 @@ const int unsigned &Memoria_no_volatil::operator[](short orden)
 int unsigned &Memoria_no_volatil::lenght()
 {
     return size_dato;
-}
-
-short Memoria_no_volatil::set_up(Variables_Guardar &variables)
-{
-    if (Function && ID == Num_elementos)
-    {
-        if(this[0].Lectura(variables.t))
-            if(this[1].Lectura(variables.peso_total))
-                if(this[2].Lectura(variables.radio_llave))
-                    if(this[3].Lectura(variables.values))
-                        if(this[4].Lectura(variables.suma_valores))
-                            if (this[5].Lectura(variables.Caudal_total))
-                                if (this[6].Lectura(variables.altura))
-                                {
-                                    this[8].Lectura(uso);
-                                    if (this[7].Lectura_lista(variables.lista_dias))
-                                    {
-                                        if (Cambio)
-                                        {
-                                            Serial.println("Cargado");
-                                            return 0;
-                                        }
-                                    }
-                                }
-    }
-    return -1;
 }
 
 void Memoria_no_volatil::Escritura_estructura(float values[3])
@@ -200,7 +184,7 @@ void Memoria_no_volatil::Escritura_estructura(float values[3])
 
 void Memoria_no_volatil::imprimir()
 {
-    for (int i = 0; i < 50; i++)
+    for (int i = 0; i < 200; i++)
     {
         Serial.println(EEPROM[i]);
     }
@@ -212,17 +196,59 @@ const bool &Memoria_no_volatil::state()
     return estado_memoria;
 }
 
-void Memoria_no_volatil::Escritura_lista(float& value)
+bool Memoria_no_volatil::Escritura_lista(float& value, short tamano)
 {
-    EEPROM.put((calVal_eepromAdress + uso.dia*sizeof(value)), value);
+    if(size >= sizeof(value)*tamano && names == Variables_Memoria::dias)
+    {
+        if (uso.dia != 0)
+            EEPROM.put((calVal_eepromAdress + (uso.dia * sizeof(value)) + 1), value);
+        else
+            EEPROM.put(calVal_eepromAdress, value);
+        estado_memoria = true;
+        return true;
+    }
+    else
+        return false;
 }
+
 bool Memoria_no_volatil::Lectura_lista(float value[30])
 {
-    for(short i = 0; i < 30; i++)
+    if (EEPROM[calVal_eepromAdress + (30 * sizeof(value[0]))] != 255 && estado_memoria)
     {
-        EEPROM.get(calVal_eepromAdress + (i*sizeof(value[i])), value[i]);
-    }
-    if(value[uso.dia] != 0)
+        EEPROM.get(calVal_eepromAdress, value[0]);
+        for (short i = 1; i < 30; i++)
+        {
+            EEPROM.get(calVal_eepromAdress + (i * sizeof(value[i]) + 1), value[i]);
+        }
         return true;
+    }
+    return false;
+}
+
+time &Memoria_no_volatil::inicializar()
+{
+    if(size_dato <= (size - 1) && calVal_eepromAdress == 0)
+        this -> Lectura(uso);
+    return uso;
+}
+
+short &Memoria_no_volatil::get_id()
+{
+    return ID;
+}
+
+bool Memoria_no_volatil::inicializar_list()
+{
+    float aux{10};
+    if(size_dato >= 150 && names == Variables_Memoria::dias)
+    {
+        EEPROM.put(calVal_eepromAdress, aux);
+        for (short i = 1; i < 30; i++)
+        {
+            EEPROM.put((calVal_eepromAdress + (i * sizeof(aux)) + 1), aux);
+        }
+        estado_memoria = true;
+        return true;
+    }
     return false;
 }

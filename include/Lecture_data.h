@@ -26,8 +26,11 @@ namespace Lectura_data
     const float y[Nums]{5, 4, 1, -1, 0};
     const short buffer{20}; //Capacidad maxima de almacenamiento.
     //Funciones:
-    int Lectura_events_numerics(float& data);
-    char *Asignacion_strings();
-    void Captura_eventos();
+    void Lectura_events_numerics(float& data, short& size);
+    char *Asignacion_strings(short& size);
+    String *Captura_eventos(short& size);
+    float Convertir_a_Numero(String numero);
 }
+
+
 #endif

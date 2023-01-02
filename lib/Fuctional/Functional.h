@@ -2,7 +2,6 @@
 #define FUNCTIONAL_H
 
 #include <Caudal.h>
-#include <Regresion_Cuadratica.h>
 
 enum estados
 {

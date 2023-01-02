@@ -7,42 +7,42 @@
 //Enumeración de los elementos guardados en memoria
 enum class Variables_Memoria
 {
-    tara,              // Posición: 0
+    Posicion,           // Posición: 0
     peso_total,        // Posición: 1
     radio_llave,       // Posición: 2
     valores_regresion, // Posición: 3
     suma_valores,      // Posición: 4
     Caudal,            // Posición: 5
     altura,            // Posición: 6
-    dias,              // Posición: 7
-    Posicion           // Posición: 8
+    tara,              // Posición: 7
+    dias               // Posición: 8
 };
 
 //Elementos de la regresión cuadratica:
 struct valores
 {
-    float x0{0}; //Termino independiente.
-    float x1{0}; //Termino de grado 1.
-    float x2{0}; //Termino de grado 2.
+    float x0{1.92}; //Termino independiente.
+    float x1{2.3}; //Termino de grado 1.
+    float x2{1}; //Termino de grado 2.
 };
 
 struct time
 {
     unsigned long  hora{0};
-    unsigned short dia{0};
+    unsigned short dia{30};
 };
 
 
 //Elementos que se almacenan en la EEPROM:
 struct Variables_Guardar
 {
-    long t{0};
-    float peso_total{0};
-    float radio_llave{0};
+    long t{210};
+    float peso_total{12.3};
+    float radio_llave{10.5};
     valores values;
-    float suma_valores{0};
-    float Caudal_total{0};
-    float altura{0};
+    float suma_valores{1.5};
+    float Caudal_total{1.6};
+    float altura{1.8};
     time tiempo{};
     float lista_dias[30]{0};
 };
@@ -63,18 +63,16 @@ class Memoria_no_volatil
         bool estado_memoria; //Estado del dato accedido.
         Variables_Memoria names; // Nombre del dato al que fue accedido.
         static bool Cambio; //Si se ha modificado algun dato.
-        static void imprimir();
-        time uso;
+        time uso; //Guarda datos sobre los días de uso y el tiempo de utilización.
 
     public:
         Memoria_no_volatil();
         ~Memoria_no_volatil();
-        short set_up(Variables_Guardar& variables);
         template <typename T1> bool Escritura_One(T1 &datos)
         {
             if (Function)
             {
-                if (names != Variables_Memoria::valores_regresion)
+                if (names != Variables_Memoria::dias)
                 {
                     if (size_dato == sizeof(T1))
                     {
@@ -99,6 +97,9 @@ class Memoria_no_volatil
         short get_Adress();
         Variables_Memoria& indentificar();
         int limpiar(); //Regresa a la dirreción #0
+        short &get_id();
+        void imprimir();
+        bool inicializar_list();
         template <typename T2> bool Lectura(T2 &data) // Función para leer los datos
         {
             if (Function)
@@ -116,9 +117,10 @@ class Memoria_no_volatil
         const int unsigned &operator[](short indx);
         int unsigned &lenght();
         void Escritura_estructura(float values[3]);
-        void Escritura_lista(float& value);
+        bool Escritura_lista(float& value, short tamano);
         bool Lectura_lista(float value[30]);
         const bool &state();
+        time &inicializar();
 };
 
 #else

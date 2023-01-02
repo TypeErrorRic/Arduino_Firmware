@@ -2,6 +2,7 @@
 #define CORRER_H
 
 #include "Lecture_data.h"
+#include "Manejo_datos.h"
 #include <Caudal.h>
 #include <Memoria_no_volatil.h>
 
@@ -17,7 +18,7 @@ namespace Correr
 {
     void setup();
     void loop();
-    void calibracion_memoria(Memoria_no_volatil& memoria);
+    void calibracion(bool& validdacion);
 };
 
 #endif

@@ -1,7 +1,7 @@
 from module.Transfer import Transfer
 from module.Base_datos import Almacenamiento
 
-class Logica(Transfer):
+class Arduino(Transfer):
 
     Guardar : Almacenamiento = Almacenamiento()
     Num_sensors : int = 5
@@ -76,7 +76,7 @@ def Lista_de_puertos() -> list:
 
 
 if __name__ == '__main__':
-    logic = Logica(9600, Lista_de_puertos())
+    logic = Arduino(9600, Lista_de_puertos())
     aux = [1.23,4.55,8.99]
     for element in aux:
         logic.Regresion(element)
