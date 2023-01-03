@@ -1,0 +1,1 @@
+tkinter.Toplevel(background=self.color).geometry(size)
