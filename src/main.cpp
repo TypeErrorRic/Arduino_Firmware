@@ -59,9 +59,11 @@ void setup()
       break;
     }
   }
-  Serial.println("Inicializado");
-  Correr::setup();
-  Correr::calibracion(calibrar);
+  /*
+    Serial.println("Inicializado");
+    Correr::setup();
+    Correr::calibracion(calibrar);
+  */
 }
 
 /**
@@ -69,7 +71,7 @@ void setup()
  */
 void loop() 
 {
-  Correr::loop();
+  //Correr::loop();
 }
 
 /**

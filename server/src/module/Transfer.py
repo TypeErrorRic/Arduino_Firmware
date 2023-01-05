@@ -9,11 +9,16 @@ class Transfer():
 
     Arduino : serial.Serial
     Ports : list = []
+    Errores: str = ""
+    baudios: int = 0
+    conexion:  str = ""
+    puerto: str = ""
 
     def __new__(cls, baudios: int, com: str = "") -> object:
         if(len(cls.Ports) == 0):
-            cls.Ports = ['COM%s' % (i + 1) for i in range(21)]
+            cls.Ports= ['COM%s' % (i + 1) for i in range(21)]
         if(com == ""):
+            aux: list = []
             for puerto in cls.Ports:
                 try:
                     if (puerto == 'COM21'):
@@ -21,9 +26,11 @@ class Transfer():
                     else:
                         cls.Arduino = serial.Serial(puerto, baudios)
                         if(cls.Arduino.is_open):
-                            cls.Arduino.timeout = 5
+                            aux.append(puerto)
+                            cls.Arduino.timeout = 2
                             mensaje: str = ""
-                            mensaje = str(serial.to_bytes(cls.Arduino.read(9)), encoding='utf-8')
+                            mensaje = str(serial.to_bytes(cls.Arduino.read(10)), encoding='utf-8')
+                            mensaje = mensaje[1:]
                             if (mensaje == "H05ricF45"):
                                 break
                             else:
@@ -31,49 +38,64 @@ class Transfer():
                                 continue
                 except serial.SerialException:
                     pass
+                except TimeoutError as msg:
+                    cls.Errores = f"{msg}"
+            cls.Ports = aux.copy()
         else:
             cls.Arduino = serial.Serial(com,baudios)
-            if(cls.Arduino.is_open):
-                cls.Arduino.timeout = 5
-                mensaje: str = ""
-                mensaje = str(serial.to_bytes(cls.Arduino.read(10)), encoding='utf-8').rstrip('\n').rstrip('\r')
-                if (mensaje == "H05ricF45"):
-                    pass
+            try:
+                if(cls.Arduino.is_open):
+                    cls.Arduino.timeout = 5
+                    mensaje: str = ""
+                    mensaje = str(serial.to_bytes(cls.Arduino.read(10)), encoding='utf-8')
+                    mensaje = mensaje[1:]
+                    if (mensaje == "H05ricF45"):
+                        pass
+                    else:
+                        cls.Arduino.close()
+                        raise TimeoutError ("Conexión fallida")
                 else:
-                    raise TimeoutError ("Conexión fallida")
-            else:
-                raise serial.SerialException ("Puerto no abierto correctamente")
+                    raise serial.SerialException ("Puerto no abierto correctamente")
+            except TimeoutError as msg:
+                cls.Errores = f"{msg}"
+            except serial.SerialException as msg:
+                cls.Errores = f"{msg}"
         if(cls.Arduino.is_open):
-            print("Se inicializo: {0}, en el puerto: {1}".format(cls.__name__,cls.Arduino.port))
+           cls.conexion = "Se inicializo: {0}, en el puerto: {1}".format("Modulo",cls.Arduino.port)
         return super().__new__(cls)
 
     def __init__(self, baudios: int, com: str = "") -> None:
         self.mensaje: str = com
-        try:
-            if(self.Arduino.is_open):
-                self.Arduino.reset_input_buffer()
-                self.Arduino.write(b"HGTCh4rGu")
-                self.mensaje = self.leer_datos()
-                assert (self.mensaje == "HGTCh4rGu"), "Clave incorrecta"
+        self.baudios = baudios
+        if(self.Errores == ""):
+            try:
+                if(self.Arduino.is_open):
+                    print("entrar")
+                    self.Arduino.reset_input_buffer()
+                    self.Arduino.write(b"HGTCh4rGu")
+                    self.mensaje = self.leer_datos()
+                    assert (self.mensaje == "HGTCh4rGu"), "Clave incorrecta"
+                else:
+                    raise TimeoutError("Puerto no abierto correctamente")
+            except serial.SerialException:
+                self.Errores = "Error en la lecutra del puerto"
+                self.Arduino.close()
+            except AssertionError as msg:
+                self.Errores = f"{msg}"
+                self.Arduino.close()
+            except TimeoutError as msg:
+                self.Errores = f"{msg}"
+                self.Arduino.close()
             else:
-                raise TimeoutError("Puerto no abierto correctamente")
-        except serial.SerialException:
-            print("Error en la lecutra del puerto")
-            self.Arduino.__del__()
-        except AssertionError as msg:
-            print(msg)
-            self.Arduino.__exit__()
-        except TimeoutError as msg:
-            print(msg)
-            self.Arduino.__exit__()
-        else:
-            print("Inicializado correctamente")
-            self.Arduino.close()
+                print("Inicializado correctamente")
+                self.Ports.pop(self.Ports.index(self.Arduino.name))
+                self.puerto = f"{self.Arduino.name}"
     
     def __call__(self) -> dict:
         return self.Arduino.get_settings()
 
     def __del__(self) -> None:
+        self.Arduino.close()
         self.Arduino.__exit__()
 
     def leer_datos(self) -> str:
@@ -83,27 +105,142 @@ class Transfer():
         enviar: bytes = bytes(value, 'utf-8')
         self.Arduino.write(enviar)
     
-    def Puerto_conectado(self):
-        return self.Arduino.name
+    def Reconectar(self, com:str) -> bool:
+        if not self.Arduino.is_open:
+            self.Errores = ""
+            if(com == ""):
+                aux: list = ['COM%s' % (i + 1) for i in range(21)]
+                aux2: set = set(self.Ports) & set(aux)
+                for element in aux2:
+                    aux.pop(aux.index(element))
+                for indx, puerto in enumerate(aux, start=1):
+                    try:
+                        if (indx == len(aux)):
+                            raise TimeoutError("No se encontro el puerto correcto.")
+                        else:
+                            self.Arduino = serial.Serial(puerto, self.baudios)
+                            if (self.Arduino.is_open):
+                                self.Ports.append(puerto)
+                                self.Arduino.timeout = 5
+                                mensaje: str = ""
+                                mensaje = str(serial.to_bytes(self.Arduino.read(10)), encoding='utf-8')
+                                mensaje = mensaje[1:]
+                                if (mensaje == "H05ricF45"):
+                                    break
+                                else:
+                                    self.Arduino.close()
+                                    continue
+                    except serial.SerialException:
+                        pass
+                    except TimeoutError as msg:
+                        self.Errores = f"{msg}"
+            else:
+                self.Arduino = serial.Serial(com, self.baudios)
+                try:
+                    if(self.Arduino.is_open):
+                        self.Arduino.timeout = 5
+                        mensaje: str = ""
+                        mensaje = str(serial.to_bytes(self.Arduino.read(10)), encoding='utf-8')
+                        mensaje = mensaje[1:]
+                        if (mensaje == "H05ricF45"):
+                            pass
+                        else:
+                            self.Arduino.close()
+                            raise TimeoutError ("Conexión fallida")
+                    else:
+                        raise serial.SerialException ("Puerto no abierto correctamente")
+                except TimeoutError as msg:
+                    self.Errores = f"{msg}"
+                except serial.SerialException as msg:
+                    self.Errores = f"{msg}"
+            if(self.Arduino.is_open):
+                self.conexion = "Se inicializo: {0}, en el puerto: {1}".format("Modulo", self.Arduino.port)
+                try:
+                    if (self.Arduino.is_open):
+                        self.Arduino.reset_input_buffer()
+                        self.Arduino.write(b"HGTCh4rGu")
+                        self.mensaje = self.leer_datos()
+                        assert (self.mensaje == "HGTCh4rGu"), "Clave incorrecta"
+                    else:
+                        raise TimeoutError("Puerto no abierto correctamente")
+                except serial.SerialException:
+                    self.Errores = "Error en la lecutra del puerto"
+                    self.Arduino.close()
+                except AssertionError as msg:
+                    self.Errores = f"{msg}"
+                    self.Arduino.close()
+                except TimeoutError as msg:
+                    self.Errores = f"{msg}"
+                    self.Arduino.close()
+                else:
+                    print("Inicializado correctamente")
+                    self.puerto = f"{self.Arduino.name}"
+                    return True
+        else:
+            pass
+        return False
     
-    @staticmethod
-    def Puerto_disponibles() -> list:
-        lista_ports: list = []
-        Transfer.Ports = ['COM%s' % (i + 1) for i in range(21)]
-        for port in Transfer.Ports:
+    def estado(self) -> bool:
+        if self.Errores == "":
+            return True
+        else:
+            self.Arduino.close()
+            return False
+    
+    def Port(self) -> str:
+        return self.puerto
+
+    def list_port(self) -> list:
+        return self.Ports.copy()
+    
+    def Puerto_disponibles(self) -> list:
+        aux: list = ['COM%s' % (i + 1) for i in range(21)]
+        newlist: list = self.Ports.copy()
+        comprobar: bool = False
+        if(len(self.Ports) == 0):
+            comprobar = True
+        if not comprobar:
+            aux2: set = set(self.Ports) & set(aux)
+            for element in aux2:
+                aux.pop(aux.index(element))
+            print(aux)
+        for port in aux:
             try:
                 Arduino = serial.Serial(port)
                 if(Arduino.is_open):
-                    lista_ports.append(port)
+                    newlist.append(port)
+                    if comprobar:
+                        self.Port.append(port)
                 Arduino.close()
             except serial.SerialException:
                 pass
-        return lista_ports
+        newlist.insert(0,"Automatico")
+        return newlist
+    
+    def estado_conexion(self) -> bool:
+        if self.Arduino.is_open:
+            if self.Errores == "":
+                return True
+            else:
+                return False
+        else:
+            return False
 
+    def confirmar_conexión(self) -> None:
+        pass
 
 if __name__ == '__main__':
     arduino = Transfer(9600)
     print("//////////////////////////")
     print("Configuracion:")
-    for llave, mensaje in arduino().items():
-        print("{0}: {1}".format(llave,mensaje))
+    if arduino.estado():
+        for llave, mensaje in arduino().items():
+            print("{0}: {1}".format(llave,mensaje))
+    else:
+        print(arduino.Errores)
+    aux :str = input("Ingrese: ")
+    if aux == "1":
+        arduino.Reconectar("")
+        print(arduino.conexion)
+    print(arduino.list_port())
+    print(arduino.Puerto_disponibles())

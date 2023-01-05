@@ -1,1 +1,1 @@
-tkinter.Toplevel(background=self.color).geometry(size)
+tiqueta.config(bg = "green")

@@ -7,11 +7,11 @@ class Arduino(Transfer):
     Num_sensors : int = 5
     port_list : list = []
 
-    def __new__(cls, baudios: int, listas: list, variable: str = ""):
+    def __new__(cls, baudios: int, listas: list = [], variable: str = ""):
         cls.port_list = listas
         return super().__new__(cls, baudios, variable)
 
-    def __init__(self, baudios: int, listas: list, variable: str = ""):
+    def __init__(self, baudios: int, listas: list = [], variable: str = ""):
         super().__init__(baudios, variable)
         self.__Altura : list = []
         self.__Regresion : dict = {}
@@ -69,10 +69,7 @@ class Arduino(Transfer):
 
 
 def Lista_de_puertos() -> list:
-    lista : list = Transfer.Puerto_disponibles()
-    for element in lista:
-        print(element)
-    return lista
+    return Transfer.Puerto_disponibles()
 
 
 if __name__ == '__main__':
