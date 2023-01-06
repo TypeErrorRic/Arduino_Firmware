@@ -1,3 +1,7 @@
+"""
+Está clase contiene todos los botones y operaciones necesarias para el correcto funcionamiento del monitor.
+"""
+
 import tkinter
 from logica import Arduino
 from Ventanas import Ventana
@@ -109,8 +113,8 @@ class Botones:
             for indx, element in enumerate(args, start=0):
                 try:
                     aux5: str = element.get()
-                    if float(aux5) > 0:
-                        lista.append(aux5)
+                    if float(aux5) > -5:
+                        lista.append(float(aux5))
                     else:
                         raise ValueError
                 except ValueError:
@@ -123,13 +127,20 @@ class Botones:
                         list1: list = [-2, 1, 4, 3, 0]
                         aux: str = self.__definir(estado1, estado2)
                         regresion_final: list = realizar(aux, list1, lista)
+                        self.caja.insert(
+                                tkinter.END, "Valores de la Regresion {}:".format(aux))
                         for element in regresion_final:
                             self.caja.insert(
                                 tkinter.END, "{:.2f}".format(element))
+                            self.dispositivo.Regresion(element)
+                        self.pantalla.after(1400, self.dispositivo.mostrar_datos_en_buffer)
+                        self.caja.insert(
+                                tkinter.END, "Regresion configurada")
+                        self.dispositivo.limpiar()
                         pantalla.destroy()
                     else:
                         pass
-
+    
     def regresion(self, posx: float, posy: float, size: str) -> None:
         self.__boton_regresion(posx, posy, size)
 
@@ -218,27 +229,32 @@ class Botones:
                         widget.config(state="disabled")
             else:
                 aux: list = self.dispositivo.Puerto_disponibles()
-                elemento = list(set(aux) ^ set(puerto))
-                if len(elemento) > 0:
-                    for element in elemento:
-                        if len(aux) > len(puerto):
-                            puerto.append(element)
-                        elif len(aux) < len(puerto):
-                            puerto.pop(puerto.index(element))
-                        else:
-                            puerto = self.dispositivo.list_port()
-                            comprobacion = list(set(aux) ^ set(puerto))
-                            for item in comprobacion:
-                                puerto.append(item)
-                            break
-                    valor_aux: str = var2.get()
-                    self.__add(var2, port, puerto, valor_aux)
+                try:
+                    puerto.pop(puerto.index("Automatico"))
+                except ValueError:
+                    pass
+                puerto.extend(aux)
+                elemento = set(puerto)
+                puerto = list(elemento)
+                puerto.insert(0, "Automatico")
+                valor_aux: str = var2.get()
+                self.__add(var2, port, puerto, valor_aux)
                 self.caja.insert(tkinter.END, "Se Buscaron Nuevos Puertos.")
         elif self.dispositivo.estado_conexion():
+            self.dispositivo.escribir_datos("[true/5]")
+            self.pantalla.after(1200, self.confirmar)
             self.caja.delete(0,tkinter.END)
+    
+    def confirmar(self):
+        if self.dispositivo.conection("sigue"):
+            print("conectado")
+        else:
+            self.dispositivo.desconectar()
 
     def __add(self, var: tkinter.StringVar, menu: tkinter.OptionMenu, port: list, value: str):
         menu['menu'].delete(0, 'end')
         for opt in port: 
             menu['menu'].add_command(label=opt, command=tkinter._setit(var, opt))
         var.set(value)
+    
+    

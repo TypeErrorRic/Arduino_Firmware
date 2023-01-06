@@ -25,13 +25,15 @@
  * @brief Función que se encarga de configurar los parametros inciales de las funciones.
  */
 
+bool calibrar{true};
+
 void setup() 
 {
   Serial.begin(9600);
   Serial.println("H05ricF45");
   unsigned long time = millis();
-  unsigned long tiempo2{0}; 
-  bool calibrar{true};
+  unsigned long tiempo2{0};
+  bool continuar{false};
   while (calibrar)
   {
     tiempo2 = millis();
@@ -39,18 +41,20 @@ void setup()
     {
       while (Serial.available())
       {
+        calibrar = false;
         String cadena = Serial.readString();
         if(cadena == "HGTCh4rGu")
         {
           Serial.println(cadena);
+          calibrar = true;
+          continuar = true;
           break;
         }
         else
-        {
-          calibrar = false;
           break;
-        }
       }
+      if(continuar)
+        break;
       tiempo2 = millis();
     }
     else
@@ -59,11 +63,7 @@ void setup()
       break;
     }
   }
-  /*
-    Serial.println("Inicializado");
-    Correr::setup();
-    Correr::calibracion(calibrar);
-  */
+    //Correr::setup();
 }
 
 /**
@@ -71,7 +71,7 @@ void setup()
  */
 void loop() 
 {
-  //Correr::loop();
+  Correr::calibracion(calibrar);
 }
 
 /**

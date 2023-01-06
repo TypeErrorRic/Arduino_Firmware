@@ -3,7 +3,8 @@
     #Conteniendo las operaciones de lectura y escritura de datos.
 
 #Librerias:
-import serial
+import serial, serial.tools.list_ports
+from threading import Thread, Event
 
 class Transfer():
 
@@ -42,8 +43,8 @@ class Transfer():
                     cls.Errores = f"{msg}"
             cls.Ports = aux.copy()
         else:
-            cls.Arduino = serial.Serial(com,baudios)
             try:
+                cls.Arduino = serial.Serial(com,baudios)
                 if(cls.Arduino.is_open):
                     cls.Arduino.timeout = 5
                     mensaje: str = ""
@@ -66,14 +67,17 @@ class Transfer():
 
     def __init__(self, baudios: int, com: str = "") -> None:
         self.mensaje: str = com
-        self.baudios = baudios
+        self.__baudios = baudios
+        self.señal = Event()
+        self.hilo = None
+        self.data : list = []
         if(self.Errores == ""):
             try:
                 if(self.Arduino.is_open):
-                    print("entrar")
                     self.Arduino.reset_input_buffer()
                     self.Arduino.write(b"HGTCh4rGu")
-                    self.mensaje = self.leer_datos()
+                    self.mensaje = str(serial.to_bytes(
+                        self.Arduino.readline()), encoding='utf-8').rstrip('\n').rstrip('\r')
                     assert (self.mensaje == "HGTCh4rGu"), "Clave incorrecta"
                 else:
                     raise TimeoutError("Puerto no abierto correctamente")
@@ -90,20 +94,58 @@ class Transfer():
                 print("Inicializado correctamente")
                 self.Ports.pop(self.Ports.index(self.Arduino.name))
                 self.puerto = f"{self.Arduino.name}"
+                self.inicializar_hilo()
     
+    def inicializar_hilo(self):
+        self.hilo = Thread(target=self.leer_datos)
+        self.hilo.setDaemon(True)
+        self.señal.set()
+        self.hilo.start()
+
+    def __stop_hilo(self):
+        if(self.hilo is not None):
+            self.señal.clear()
+            self.hilo.join()
+            self.hilo = None
+    
+    def desconectar(self):
+        self.Arduino.close()
+        self.__stop_hilo()
+
     def __call__(self) -> dict:
         return self.Arduino.get_settings()
 
     def __del__(self) -> None:
-        self.Arduino.close()
-        self.Arduino.__exit__()
+        self.desconectar()
 
-    def leer_datos(self) -> str:
-        return str(serial.to_bytes(self.Arduino.readline()), encoding='utf-8').rstrip('\n').rstrip('\r')
+    def leer_datos(self) -> None:
+        try:
+            while(self.señal.isSet() and self.Arduino.is_open):
+                datos = self.Arduino.readline().decode("utf-8").strip()
+                if(len(datos) > 0):
+                    self.data.append(datos)
+        except TypeError:
+            pass
 
     def escribir_datos(self, value: str) -> None:
-        enviar: bytes = bytes(value, 'utf-8')
-        self.Arduino.write(enviar)
+        self.Arduino.reset_input_buffer()
+        self.Arduino.reset_output_buffer()
+        if(self.Arduino.is_open):
+            datos = value
+            self.Arduino.write(datos.encode())
+        else:
+            self.Errores = "No se pudo enviar el mensaje. Arduino desconectado."
+
+    def comprobar_data(self) -> None:
+        while True:
+            print(self.data)
+            print(len(self.data))
+            aux = input("valor: ")
+            if(aux == "1"):
+                break
+            if(aux == "0"):
+                self.escribir_datos("[2.3/1]")
+                print("escrito")
     
     def Reconectar(self, com:str) -> bool:
         if not self.Arduino.is_open:
@@ -135,8 +177,8 @@ class Transfer():
                     except TimeoutError as msg:
                         self.Errores = f"{msg}"
             else:
-                self.Arduino = serial.Serial(com, self.baudios)
                 try:
+                    self.Arduino = serial.Serial(com, self.baudios)
                     if(self.Arduino.is_open):
                         self.Arduino.timeout = 5
                         mensaje: str = ""
@@ -159,7 +201,8 @@ class Transfer():
                     if (self.Arduino.is_open):
                         self.Arduino.reset_input_buffer()
                         self.Arduino.write(b"HGTCh4rGu")
-                        self.mensaje = self.leer_datos()
+                        self.mensaje = str(serial.to_bytes(
+                            self.Arduino.readline()), encoding='utf-8').rstrip('\n').rstrip('\r')
                         assert (self.mensaje == "HGTCh4rGu"), "Clave incorrecta"
                     else:
                         raise TimeoutError("Puerto no abierto correctamente")
@@ -174,6 +217,7 @@ class Transfer():
                     self.Arduino.close()
                 else:
                     print("Inicializado correctamente")
+                    self.inicializar_hilo()
                     self.puerto = f"{self.Arduino.name}"
                     return True
         else:
@@ -194,8 +238,7 @@ class Transfer():
         return self.Ports.copy()
     
     def Puerto_disponibles(self) -> list:
-        aux: list = ['COM%s' % (i + 1) for i in range(21)]
-        newlist: list = self.Ports.copy()
+        aux: list = [port.device for port in serial.tools.list_ports.comports()]
         comprobar: bool = False
         if(len(self.Ports) == 0):
             comprobar = True
@@ -203,19 +246,7 @@ class Transfer():
             aux2: set = set(self.Ports) & set(aux)
             for element in aux2:
                 aux.pop(aux.index(element))
-            print(aux)
-        for port in aux:
-            try:
-                Arduino = serial.Serial(port)
-                if(Arduino.is_open):
-                    newlist.append(port)
-                    if comprobar:
-                        self.Port.append(port)
-                Arduino.close()
-            except serial.SerialException:
-                pass
-        newlist.insert(0,"Automatico")
-        return newlist
+        return aux
     
     def estado_conexion(self) -> bool:
         if self.Arduino.is_open:
@@ -226,11 +257,10 @@ class Transfer():
         else:
             return False
 
-    def confirmar_conexión(self) -> None:
-        pass
-
 if __name__ == '__main__':
     arduino = Transfer(9600)
+    arduino.comprobar_data()
+    """
     print("//////////////////////////")
     print("Configuracion:")
     if arduino.estado():
@@ -244,3 +274,4 @@ if __name__ == '__main__':
         print(arduino.conexion)
     print(arduino.list_port())
     print(arduino.Puerto_disponibles())
+    """

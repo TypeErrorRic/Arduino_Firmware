@@ -56,7 +56,7 @@ namespace Manejo_datos
                                     memoria[7];
                                     if (memoria.Lectura(Variables_datos.t))
                                     {
-                                        Serial.println("0");
+                                        Serial.println("sin errores");
                                     }
                                     else
                                         Serial.println("6");
@@ -96,11 +96,15 @@ namespace Manejo_datos
         memoria.Escritura_One(Variables_datos.suma_valores);
     }
 
-    void guarda_config_generales(float &peso, float &altura)
+    void guarda_config_peso(float &peso)
     {
         Variables_datos.peso_total = peso;
         memoria[1];
         memoria.Escritura_One(Variables_datos.peso_total);
+    }
+
+    void guarda_config_altura(float &altura)
+    {
         Variables_datos.altura = altura;
         memoria[6];
         memoria.Escritura_One(Variables_datos.altura);

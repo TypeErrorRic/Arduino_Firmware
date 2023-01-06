@@ -9,7 +9,8 @@ namespace Manejo_datos
     void set_up();
     void Guardar_regresion(float array[3]);
     void Guardar_config_celda_carga(long &tara, float &suma);
-    void guarda_config_generales(float &peso, float &altura);
+    void guarda_config_peso(float &peso);
+    void guarda_config_altura(float &altura);
     void guardar_peso_diario(float &dias);
     void limpiar_data();
     bool inicializar();

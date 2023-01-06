@@ -57,6 +57,7 @@ class Ventana:
     def scrow_bar(self, listbox: tkinter.Listbox) -> None:
         scroll = tkinter.Scrollbar(self.ventana, command=listbox.yview)
         scroll.place(relx=0.73, rely=0.18,relheight=0.7)
+
         
 
 if __name__ == "__main__":

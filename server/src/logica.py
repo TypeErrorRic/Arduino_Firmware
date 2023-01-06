@@ -1,5 +1,6 @@
 from module.Transfer import Transfer
 from module.Base_datos import Almacenamiento
+import time
 
 class Arduino(Transfer):
 
@@ -38,10 +39,10 @@ class Arduino(Transfer):
     def __Enviar_valores_regresion(self, lista : list) -> None:
         aux : str = "["
         for element in lista:
-            aux += f"{element}/"
+            aux += "{:.2}/".format(element)
         aux = aux + "0]"
-        #super().escribir_datos(aux)
         print(aux)
+        super().escribir_datos(aux)
 
     def Regresion(self, value : float):
         if (contador := self.__contador2 + 1) <= (3):
@@ -54,6 +55,7 @@ class Arduino(Transfer):
                 self.Guardar.datos_arduino = self.__Regresion
                 self.__Enviar_valores_regresion(list(self.__Regresion.values()))
                 self.Guardar.Guardar_datos()
+    
     def Datos_Almacenados(self, peso: float, maxi : float) -> None:
         aux: dict = {}
         lista_valores : str = "["
@@ -64,16 +66,37 @@ class Arduino(Transfer):
         self.Guardar.configuracion = aux
         #super().escribir_datos(lista_valores)
 
-    def obtener_datos(self) -> None:
-        datos: str = super().leer_datos()
-
-
-def Lista_de_puertos() -> list:
-    return Transfer.Puerto_disponibles()
-
+    def conection(self, value: str) -> bool:
+        if self.Arduino.is_open:
+            if self.señal.isSet():
+                for intem in self.data:
+                    if intem == value:
+                        self.data.clear()
+                        return True
+                return False
+            else:
+                self.Arduino.close()
+                return False
+        else:
+            return False
+    
+    def limpiar(self) -> None:
+        if(len(self.data) != 0):
+            self.data.clear()
+        else:
+            pass
+    def mostrar_datos_en_buffer(self) -> None:
+        if(len(self.data) == 0):
+            print("sin datos")
+        else:
+            for item in self.data:
+                print(item)
 
 if __name__ == '__main__':
-    logic = Arduino(9600, Lista_de_puertos())
+    logic = Arduino(9600)
+
+    """
     aux = [1.23,4.55,8.99]
     for element in aux:
         logic.Regresion(element)
+    """

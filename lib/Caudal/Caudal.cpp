@@ -28,7 +28,7 @@ void Caudal::set_valores(float valores[3], float &altura)
   this->valores = &valores[0];
   this->tanq_altura = altura;
   //Obtener valores de la EEPROM
-  Serial.println("Starting...");
+  //Serial.println("Starting...");
   balanza.begin(config.HX711_dout, config.HX711_sck);
   Serial.println(balanza.read());
   balanza.set_scale(variables.suma_valores); // Establecemos la escala

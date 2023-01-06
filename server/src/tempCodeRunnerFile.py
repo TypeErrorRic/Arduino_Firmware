@@ -1,1 +1,1 @@
-tiqueta.config(bg = "green")
+valores = Conectado_datos(Window, dispositivo, caja)

@@ -99,14 +99,14 @@ namespace Lectura_data
 
     char *Asignacion_strings(short& size)
     {
-        if (Serial.available() > 0)
+        if (Serial.available())
         {
             String datos = Serial.readString();
             if(datos.length() > 3)
             {
-                char *variable = new char[datos.length() - 2];
-                datos.toCharArray(variable, (datos.length() - 1));
-                size = datos.length() - 2;
+                char *variable = new char[datos.length()];
+                datos.toCharArray(variable, (datos.length()+1));
+                size = datos.length();
                 return variable;
             }
         }

@@ -47,9 +47,9 @@ namespace Correr
             }
         }
     }
-    void calibracion(bool &validdacion)
+    void calibracion(bool &validacion)
     {
-        while(validdacion)
+        while(validacion)
         {
             short size{0};
             String *list = Lectura_data::Captura_eventos(size);
@@ -60,13 +60,15 @@ namespace Correr
                 array[1] = Lectura_data::Convertir_a_Numero(list[2]);
                 array[2] = Lectura_data::Convertir_a_Numero(list[3]);
                 Manejo_datos::Guardar_regresion(array);
+                for(short i=0; i<3; i++)
+                    Serial.println(array[i]);
             }
-            //Altura y Peso total:
-            else if (list[0] == "1" && size == 3)
+            //Peso total:
+            else if (list[0] == "1" && size == 2)
             {
-                Variables_datos.altura = Lectura_data::Convertir_a_Numero(list[0]);
                 Variables_datos.peso_total = Lectura_data::Convertir_a_Numero(list[1]);
-                Manejo_datos::guarda_config_generales(Variables_datos.peso_total, Variables_datos.altura);
+                Manejo_datos::guarda_config_peso(Variables_datos.peso_total);
+                Serial.println(Variables_datos.peso_total);
             }
             //Celdad de carga:
             else if(list[0] == "2" && size == 2)
@@ -83,7 +85,7 @@ namespace Correr
                         listas = Lectura_data::Asignacion_strings(size);
                         if (listas != nullptr)
                         {
-                            if(listas[1] == '1')
+                            if(listas[1] == 't')
                             {
                                 realizar = true;
                             }
@@ -104,19 +106,48 @@ namespace Correr
                     }
                 }
             }
+            //Limpiar:
             else if(list[0] == "4")
             {
                 Manejo_datos::limpiar_data();
                 if(Manejo_datos::inicializar())
                     Variables_datos = Manejo_datos::get_datos();
             }
+            //Salir y confirmar:
             else if(list[0] == "5")
             {
-                delete[] list;
-                break;
+                if(list[1] == "true")
+                    Serial.println("sigue");
+                else if (list[1] == "false")
+                {
+                    delete[] list;
+                    break;
+                }
+            }
+            //Conseuir datos almacenados:
+            else if(list[0] == "6")
+            {
+                if(list[1] == "true")
+                {
+                    Serial.println(Variables_datos.t);
+                    Serial.println(Variables_datos.peso_total);
+                    Serial.println(Variables_datos.radio_llave);
+                    Serial.println(Variables_datos.suma_valores);
+                    Serial.println(Variables_datos.Caudal_total);
+                    Serial.println(Variables_datos.altura);
+                }
+                else
+                    Serial.println("00");
+            }
+            //Altura_maxima
+            else if(list[0] == "7")
+            {
+                Variables_datos.altura = Lectura_data::Convertir_a_Numero(list[1]);
+                Manejo_datos::guarda_config_peso(Variables_datos.altura);
+                Serial.println(Variables_datos.altura);
             }
             delete[] list;
         }
-        validdacion = false;
+        validacion = false;
     }
 }
