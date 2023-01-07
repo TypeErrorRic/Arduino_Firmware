@@ -26,10 +26,10 @@ struct valores
     float x2{1}; //Termino de grado 2.
 };
 
-struct time
+struct time //Posicion en dias:
 {
     unsigned long  hora{0};
-    unsigned short dia{30};
+    unsigned short dia{0};
 };
 
 
@@ -121,6 +121,8 @@ class Memoria_no_volatil
         bool Lectura_lista(float value[30]);
         const bool &state();
         time &inicializar();
+        bool volver_cero();
+        unsigned short &incremento();
 };
 
 #else

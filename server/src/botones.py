@@ -200,12 +200,14 @@ class Botones:
                 if isinstance(widget, tkinter.Button):
                     if widget.config('text')[-1] == "Conectar":
                         widget.config(state="disabled")
+                    elif widget.config('text')[-1] == "Enviar datos":
+                        widget.config(state="disabled")
                     else:
                         widget.config(state="active")
                 elif isinstance(widget, tkinter.OptionMenu):
                         widget.config(state="disabled")
                 elif isinstance(widget, tkinter.Entry):
-                    widget.config(state="normal")
+                    widget.config(state="disabled")
             self.caja.insert(tkinter.END, self.dispositivo.conexion)
         else:
             self.caja.insert(tkinter.END, self.dispositivo.Errores)

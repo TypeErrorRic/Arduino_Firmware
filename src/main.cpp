@@ -63,8 +63,16 @@ void setup()
       break;
     }
   }
-    Correr::setup();
-    Correr::calibracion(calibrar);
+  /*
+  Manejo_datos::limpiar_data();
+  Manejo_datos::set_up();
+  float var{12.5};
+  Manejo_datos::guardar_peso_diario(var);
+  Manejo_datos::guardar_peso_diario(var);
+  Manejo_datos::guardar_peso_diario(var);
+  */
+  Correr::setup();
+  Correr::calibracion(calibrar);
 }
 
 /**

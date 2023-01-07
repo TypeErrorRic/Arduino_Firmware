@@ -29,7 +29,6 @@ Memoria_no_volatil::Memoria_no_volatil() : Function{true}, estado_memoria{false}
     }
     if (EEPROM[size - 1] == 255)
         EEPROM[size - 1] = 1;
-    Serial.println(size_dato);
 }
 
 Memoria_no_volatil::~Memoria_no_volatil()
@@ -141,10 +140,7 @@ const int unsigned &Memoria_no_volatil::operator[](short orden)
     {
         // Asignación de nombres de la variables.
         if (orden == static_cast<short>(Variables_Memoria::tara))
-        {
             names = Variables_Memoria::tara;
-            Serial.println(calVal_eepromAdress);
-        }
         else if (orden == static_cast<short>(Variables_Memoria::peso_total))
             names = Variables_Memoria::peso_total;
         else if (orden == static_cast<short>(Variables_Memoria::radio_llave))
@@ -201,7 +197,10 @@ bool Memoria_no_volatil::Escritura_lista(float& value, short tamano)
     if(size >= sizeof(value)*tamano && names == Variables_Memoria::dias)
     {
         if (uso.dia != 0)
+        {
+            calVal_eepromAdress -= 1;
             EEPROM.put((calVal_eepromAdress + (uso.dia * sizeof(value)) + 1), value);
+        }
         else
             EEPROM.put(calVal_eepromAdress, value);
         estado_memoria = true;
@@ -213,9 +212,10 @@ bool Memoria_no_volatil::Escritura_lista(float& value, short tamano)
 
 bool Memoria_no_volatil::Lectura_lista(float value[30])
 {
-    if (EEPROM[calVal_eepromAdress + (30 * sizeof(value[0]))] != 255 && estado_memoria)
+    if (size_dato == 120 && estado_memoria)
     {
         EEPROM.get(calVal_eepromAdress, value[0]);
+        calVal_eepromAdress -= 1;
         for (short i = 1; i < 30; i++)
         {
             EEPROM.get(calVal_eepromAdress + (i * sizeof(value[i]) + 1), value[i]);
@@ -227,7 +227,7 @@ bool Memoria_no_volatil::Lectura_lista(float value[30])
 
 time &Memoria_no_volatil::inicializar()
 {
-    if(size_dato <= (size - 1) && calVal_eepromAdress == 0)
+    if(calVal_eepromAdress == 0)
         this -> Lectura(uso);
     return uso;
 }
@@ -239,10 +239,11 @@ short &Memoria_no_volatil::get_id()
 
 bool Memoria_no_volatil::inicializar_list()
 {
-    float aux{10};
-    if(size_dato >= 150 && names == Variables_Memoria::dias)
+    float aux{0};
+    if (size_dato >= (30 * sizeof(aux)) && names == Variables_Memoria::dias)
     {
         EEPROM.put(calVal_eepromAdress, aux);
+        calVal_eepromAdress -= 1;
         for (short i = 1; i < 30; i++)
         {
             EEPROM.put((calVal_eepromAdress + (i * sizeof(aux)) + 1), aux);
@@ -251,4 +252,28 @@ bool Memoria_no_volatil::inicializar_list()
         return true;
     }
     return false;
+}
+
+bool Memoria_no_volatil::volver_cero()
+{
+    if(calVal_eepromAdress == 0)
+    {
+        uso.dia = 0;
+        this->Escritura_One(uso);
+        return true;
+    }
+    else
+        return false; 
+}
+
+unsigned short &Memoria_no_volatil::incremento()
+{
+    if(calVal_eepromAdress == 0)
+    {
+        uso.dia = uso.dia % 30;
+        if (not(int(uso.dia/30) == 1))
+            uso.dia += 1;
+        Escritura_One(uso);
+    }
+    return uso.dia;
 }

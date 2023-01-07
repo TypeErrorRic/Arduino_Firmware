@@ -12,17 +12,17 @@
         "inter_byte_timeout": null
     },
     "Datos_Arduino": {
-        "Tara": "210",
-        "Peso Total": "12.30",
+        "Tara": "20",
+        "Peso Total": "2.70",
         "Radio llave": "10.50",
         "Suma Valores": "1.50",
         "Caudal Total": "1.60",
         "Altura Maxima": "1.80"
     },
     "Estadistica": [
-        0.0,
-        0.0,
-        0.0,
+        12.5,
+        12.5,
+        12.5,
         0.0,
         0.0,
         0.0,

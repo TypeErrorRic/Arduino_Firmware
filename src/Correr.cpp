@@ -105,12 +105,19 @@ namespace Correr
                     }
                 }
             }
-            //Limpiar:
+            //Limpiar valores de la lista:
             else if(list[0] == "4")
             {
-                Manejo_datos::limpiar_data();
-                if(Manejo_datos::inicializar())
-                    Variables_datos = Manejo_datos::get_datos();
+                //Manejo_datos::limpiar_data(); //Reinicia todos los datos. No activar aquí
+                if(list[1] == "true")
+                    if(Manejo_datos::inicializar())
+                    {
+                        Variables_datos = Manejo_datos::borrar_list();
+                        for (short i = 0; i < 30; i++)
+                        {
+                            Serial.println(Variables_datos.lista_dias[i]);
+                        }
+                    }
             }
             //Salir y confirmar:
             else if(list[0] == "5")

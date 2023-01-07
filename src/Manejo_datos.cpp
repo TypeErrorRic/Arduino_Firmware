@@ -28,10 +28,21 @@ namespace Manejo_datos
         memoria.inicializar_list();
     }
 
+    Variables_Guardar &borrar_list()
+    {
+        memoria[0];
+        memoria.volver_cero();
+        memoria[8];
+        memoria.inicializar_list();
+        set_up();
+        return Variables_datos;
+    }
+
     void set_up()
     {
         memoria[0];
         Variables_datos.tiempo = memoria.inicializar();
+        char error{'a'};
         memoria[1];
         if (memoria.Lectura(Variables_datos.peso_total))
         {
@@ -56,25 +67,36 @@ namespace Manejo_datos
                                     memoria[7];
                                     if (memoria.Lectura(Variables_datos.t))
                                     {
-                                        Serial.println("sin errores");
+                                        error = '0';
                                     }
                                     else
-                                        Serial.println("6");
+                                        error = '8';
                                 }
+                                else
+                                    error = '7';
                             }
+                            else
+                                error = '6';
                         }
                         else
-                            Serial.println("5");
+                            error = '5';
                     }
+                    else
+                        error = '4';
                 }
                 else
-                    Serial.println("4");
+                    error = '3';
             }
             else
-                Serial.println("3");
+                error = '2';
         }
         else
-            Serial.println("2");
+            error = '1';
+        if (error != '0')
+        {
+            //Serial.print("Error: "); //Habilitar luego.
+            //Serial.println(error);
+        }
     }
 
     void Guardar_regresion(float array[3])
@@ -114,6 +136,8 @@ namespace Manejo_datos
     {
         memoria[8];
         memoria.Escritura_lista(dias, 30);
+        memoria[0];
+        Variables_datos.tiempo.dia = memoria.incremento();
     }
 
     void limpiar_data()

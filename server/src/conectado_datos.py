@@ -98,10 +98,12 @@ class Conectado_datos:
         boton3.place(relx=0.5, rely=0.5)
         boton4 = tkinter.Button(Estadistica_x2, text="Imprimir datos", command=self.imprimir_datos_dias)
         boton4.place(relx=0.7, rely=0.5)
+        boton5 = tkinter.Button(Estadistica_x2, text="Borrar datos", command=self.borrar_datos_estadisticos)
+        boton5.place(relx=0.4, rely=0.8)
 
     def media_ardu(self) -> None:
         aux : float = mean(self.dispositivo.Datos_estadisticos)
-        self.caja.insert(tkinter.END, f"La mediana de los datos: {aux}")
+        self.caja.insert(tkinter.END, f"La media de los datos es: {aux}")
 
     def moda(self) -> None:
         aux: float = mode(self.dispositivo.Datos_estadisticos)
@@ -115,6 +117,11 @@ class Conectado_datos:
         self.caja.insert(tkinter.END, f"Los datos de los dias son: ")
         for indx, item in enumerate(self.dispositivo.Datos_estadisticos, start=1):
             self.caja.insert(tkinter.END, f"Día {indx}: {item}")
+
+    def borrar_datos_estadisticos(self) -> None:
+        self.dispositivo.escribir_datos("[true/4]")
+        self.Estadistica = True
+        self.pantalla.after(2000, self.datos_dias)
 
     def datos_dias(self) -> None:
         if self.dispositivo.datos_estadisticos_ard(self.Estadistica):
@@ -271,7 +278,8 @@ class Conectado_datos:
         self.pantalla.protocol("WM_DELETE_WINDOW", self.cerrar_principal)
 
     def cerrar_principal(self) -> None:
-        self.dispositivo.escribir_datos("[false/5]")
+        if self.dispositivo.estado_conexion():
+            self.dispositivo.escribir_datos("[false/5]")
         self.pantalla.after(1000, self.terminado)
     
     def terminado(self) -> None:

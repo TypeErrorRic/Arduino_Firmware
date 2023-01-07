@@ -14,6 +14,7 @@ namespace Manejo_datos
     void guardar_peso_diario(float &dias);
     void limpiar_data();
     bool inicializar();
+    Variables_Guardar &borrar_list();
     Variables_Guardar &get_datos();
 };
 

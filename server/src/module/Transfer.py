@@ -30,8 +30,8 @@ class Transfer():
                             aux.append(puerto)
                             cls.Arduino.timeout = 2
                             mensaje: str = ""
-                            mensaje = str(serial.to_bytes(cls.Arduino.read(10)), encoding='utf-8')
-                            mensaje = mensaje[1:]
+                            mensaje = str(serial.to_bytes(cls.Arduino.read(9)), encoding='utf-8') #Si algo es 10.
+                            #mensaje = mensaje[1:]
                             if (mensaje == "H05ricF45"):
                                 break
                             else:
@@ -48,8 +48,8 @@ class Transfer():
                 if(cls.Arduino.is_open):
                     cls.Arduino.timeout = 5
                     mensaje: str = ""
-                    mensaje = str(serial.to_bytes(cls.Arduino.read(10)), encoding='utf-8')
-                    mensaje = mensaje[1:]
+                    mensaje = str(serial.to_bytes(cls.Arduino.read(9)), encoding='utf-8')
+                    #mensaje = mensaje[1:]
                     if (mensaje == "H05ricF45"):
                         pass
                     else:
@@ -169,8 +169,8 @@ class Transfer():
                                 self.Ports.append(puerto)
                                 self.Arduino.timeout = 5
                                 mensaje: str = ""
-                                mensaje = str(serial.to_bytes(self.Arduino.read(10)), encoding='utf-8')
-                                mensaje = mensaje[1:]
+                                mensaje = str(serial.to_bytes(self.Arduino.read(9)), encoding='utf-8')
+                                #mensaje = mensaje[1:]
                                 if (mensaje == "H05ricF45"):
                                     break
                                 else:
@@ -182,12 +182,12 @@ class Transfer():
                         self.Errores = f"{msg}"
             else:
                 try:
-                    self.Arduino = serial.Serial(com, self.baudios)
+                    self.Arduino = serial.Serial(com, self.__baudios)
                     if(self.Arduino.is_open):
                         self.Arduino.timeout = 5
                         mensaje: str = ""
-                        mensaje = str(serial.to_bytes(self.Arduino.read(10)), encoding='utf-8')
-                        mensaje = mensaje[1:]
+                        mensaje = str(serial.to_bytes(self.Arduino.read(9)), encoding='utf-8')
+                        #mensaje = mensaje[1:]
                         if (mensaje == "H05ricF45"):
                             pass
                         else:
@@ -269,11 +269,11 @@ class Transfer():
 
 if __name__ == '__main__':
     arduino = Transfer(9600)
+    """
     aux = input("valor")
     arduino.Reconectar("")
     print(arduino.Errores)
     #arduino.comprobar_data()
-    """
     print("//////////////////////////")
     print("Configuracion:")
     if arduino.estado():
