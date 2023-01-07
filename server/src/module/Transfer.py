@@ -70,7 +70,7 @@ class Transfer():
         self.__baudios = baudios
         self.señal = Event()
         self.hilo = None
-        self.data : list = []
+        self.__data : list = []
         if(self.Errores == ""):
             try:
                 if(self.Arduino.is_open):
@@ -123,7 +123,7 @@ class Transfer():
             while(self.señal.isSet() and self.Arduino.is_open):
                 datos = self.Arduino.readline().decode("utf-8").strip()
                 if(len(datos) > 0):
-                    self.data.append(datos)
+                    self.__data.append(datos)
         except TypeError:
             pass
 
@@ -136,15 +136,19 @@ class Transfer():
         else:
             self.Errores = "No se pudo enviar el mensaje. Arduino desconectado."
 
+    @property
+    def data(self) -> list:
+        return self.__data.copy()
+
     def comprobar_data(self) -> None:
         while True:
-            print(self.data)
-            print(len(self.data))
+            print(self.__data)
+            print(len(self.__data))
             aux = input("valor: ")
             if(aux == "1"):
                 break
             if(aux == "0"):
-                self.escribir_datos("[2.3/1]")
+                self.escribir_datos("[true/3]")
                 print("escrito")
     
     def Reconectar(self, com:str) -> bool:
@@ -160,7 +164,7 @@ class Transfer():
                         if (indx == len(aux)):
                             raise TimeoutError("No se encontro el puerto correcto.")
                         else:
-                            self.Arduino = serial.Serial(puerto, self.baudios)
+                            self.Arduino = serial.Serial(puerto, self.__baudios)
                             if (self.Arduino.is_open):
                                 self.Ports.append(puerto)
                                 self.Arduino.timeout = 5
@@ -257,9 +261,18 @@ class Transfer():
         else:
             return False
 
+    def limpiar(self) -> None:
+        if (len(self.__data) != 0):
+            self.__data.clear()
+        else:
+            pass
+
 if __name__ == '__main__':
     arduino = Transfer(9600)
-    arduino.comprobar_data()
+    aux = input("valor")
+    arduino.Reconectar("")
+    print(arduino.Errores)
+    #arduino.comprobar_data()
     """
     print("//////////////////////////")
     print("Configuracion:")

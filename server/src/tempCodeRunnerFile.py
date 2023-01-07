@@ -1,1 +1,1 @@
-valores = Conectado_datos(Window, dispositivo, caja)
+380x480

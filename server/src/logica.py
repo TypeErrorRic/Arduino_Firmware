@@ -5,8 +5,8 @@ import time
 class Arduino(Transfer):
 
     Guardar : Almacenamiento = Almacenamiento()
-    Num_sensors : int = 5
-    port_list : list = []
+    Datos_estadisticos : list  = []
+    Diccionario_arduino : dict = {}
 
     def __new__(cls, baudios: int, listas: list = [], variable: str = ""):
         cls.port_list = listas
@@ -14,27 +14,12 @@ class Arduino(Transfer):
 
     def __init__(self, baudios: int, listas: list = [], variable: str = ""):
         super().__init__(baudios, variable)
-        self.__Altura : list = []
         self.__Regresion : dict = {}
-        self.__contador: int = 0
         self.__contador2: int = 0
-        self.__Peso_total: int = 0
-        self.__Altura_max: int = 0
+        self.Guardar.Cargar_datos()
 
-    @property
-    def Altura(self) -> list:
-        return self.__Altura
-    
-    @Altura.setter
-    def Altura(self, value : float) -> None:
-        if (contador := self.__contador + 1) <= (self.Num_sensors + 1):
-            self.__Altura.append(value)
-            self.__contador = contador
-    
-    @Altura.deleter
-    def Altura(self) -> None:
-        if len(self.__Altura) != 0:
-            self.__Altura.pop(self.__contador - 1)
+    def datos_guardos_json(self) -> str:
+        return self.Guardar.__str__()
     
     def __Enviar_valores_regresion(self, lista : list) -> None:
         aux : str = "["
@@ -55,45 +40,72 @@ class Arduino(Transfer):
                 self.Guardar.datos_arduino = self.__Regresion
                 self.__Enviar_valores_regresion(list(self.__Regresion.values()))
                 self.Guardar.Guardar_datos()
-    
-    def Datos_Almacenados(self, peso: float, maxi : float) -> None:
-        aux: dict = {}
-        lista_valores : str = "["
-        aux.setdefault("Peso max", peso)
-        lista_valores += f"{peso}/"
-        aux.setdefault("Altura max", maxi)
-        lista_valores += f"{maxi}/1]"
-        self.Guardar.configuracion = aux
-        #super().escribir_datos(lista_valores)
 
     def conection(self, value: str) -> bool:
         if self.Arduino.is_open:
             if self.señal.isSet():
                 for intem in self.data:
-                    if intem == value:
-                        self.data.clear()
-                        return True
+                    try:
+                        valu_aux: float = float(intem)
+                        if valu_aux == float(value):
+                            self.limpiar()
+                            return True
+                    except ValueError:
+                        if intem == value:
+                            self.limpiar()
+                            return True
                 return False
             else:
+                print("Hilo fallo")
                 self.Arduino.close()
                 return False
         else:
             return False
     
-    def limpiar(self) -> None:
-        if(len(self.data) != 0):
-            self.data.clear()
-        else:
-            pass
     def mostrar_datos_en_buffer(self) -> None:
-        if(len(self.data) == 0):
+        if(len(self.__data) == 0):
             print("sin datos")
         else:
-            for item in self.data:
+            for item in self.__data:
                 print(item)
+
+    def datos_estadisticos_ard(self, validar: bool) -> bool:
+        if validar:
+            if len(self.data) == 30:
+                for item in self.data:
+                    try:
+                        self.Datos_estadisticos.append(float(item))
+                    except ValueError:
+                        pass
+                self.limpiar()
+                self.Guardar.datos_estadisticos = self.Datos_estadisticos
+                self.Guardar.Guardar_datos()
+                return True
+            else:
+                return False
+        return False
+
+    def recolectar_datos(self, validacion: bool) -> dict:
+        if validacion:
+            if (len(self.data) == 6):
+                self.Guardar.datos_arduino = {
+                    "Tara": self.data[0],
+                    "Peso Total": self.data[1],
+                    "Radio llave": self.data[2],
+                    "Suma Valores": self.data[3],
+                    "Caudal Total": self.data[4],
+                    "Altura Maxima": self.data[5]
+                }
+                self.Guardar.configuracion = self.Arduino.get_settings()
+                self.Guardar.Guardar_datos()
+                self.limpiar()
+            else:
+                print("Sin datos")
+        return self.Guardar.datos_arduino
 
 if __name__ == '__main__':
     logic = Arduino(9600)
+    logic.comprobar_data()
 
     """
     aux = [1.23,4.55,8.99]

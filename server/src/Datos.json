@@ -1,9 +1,54 @@
 {
-    "configuracion": {},
-    "Datos_Arduino": {
-        "a": 1.1428571428571428,
-        "x2": 0.3896103896103897,
-        "x3": 0.06493506493506493
+    "configuracion": {
+        "baudrate": 9600,
+        "bytesize": 8,
+        "parity": "N",
+        "stopbits": 1,
+        "xonxoff": false,
+        "dsrdtr": false,
+        "rtscts": false,
+        "timeout": 2,
+        "write_timeout": null,
+        "inter_byte_timeout": null
     },
-    "Estadistica": []
+    "Datos_Arduino": {
+        "Tara": "210",
+        "Peso Total": "12.30",
+        "Radio llave": "10.50",
+        "Suma Valores": "1.50",
+        "Caudal Total": "1.60",
+        "Altura Maxima": "1.80"
+    },
+    "Estadistica": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+    ]
 }

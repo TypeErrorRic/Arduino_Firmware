@@ -133,10 +133,9 @@ class Botones:
                             self.caja.insert(
                                 tkinter.END, "{:.2f}".format(element))
                             self.dispositivo.Regresion(element)
-                        self.pantalla.after(1400, self.dispositivo.mostrar_datos_en_buffer)
+                        self.pantalla.after(1400, self.confirmar)
                         self.caja.insert(
                                 tkinter.END, "Regresion configurada")
-                        self.dispositivo.limpiar()
                         pantalla.destroy()
                     else:
                         pass
@@ -177,6 +176,8 @@ class Botones:
         else:
             boton1.config(state="disabled")
             aux.config(state="disabled")
+            var.set(self.dispositivo.Port())
+            self.caja.insert(tkinter.END, self.dispositivo.conexion)
     
     #Boton para obtener las opciones:
     def menu_opciones_conexion(self, var: tkinter.StringVar, port: list) -> tkinter.OptionMenu:
@@ -234,7 +235,7 @@ class Botones:
                 except ValueError:
                     pass
                 puerto.extend(aux)
-                elemento = set(puerto)
+                elemento : set = set(puerto)
                 puerto = list(elemento)
                 puerto.insert(0, "Automatico")
                 valor_aux: str = var2.get()
@@ -242,14 +243,15 @@ class Botones:
                 self.caja.insert(tkinter.END, "Se Buscaron Nuevos Puertos.")
         elif self.dispositivo.estado_conexion():
             self.dispositivo.escribir_datos("[true/5]")
-            self.pantalla.after(1200, self.confirmar)
+            self.pantalla.after(2000, self.confirmar)
             self.caja.delete(0,tkinter.END)
     
     def confirmar(self):
         if self.dispositivo.conection("sigue"):
-            print("conectado")
+            self.caja.insert(tkinter.END, "Conection True")
         else:
             self.dispositivo.desconectar()
+            self.caja.insert(tkinter.END, "Conection False")
 
     def __add(self, var: tkinter.StringVar, menu: tkinter.OptionMenu, port: list, value: str):
         menu['menu'].delete(0, 'end')

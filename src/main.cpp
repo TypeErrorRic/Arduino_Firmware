@@ -29,7 +29,7 @@ bool calibrar{true};
 
 void setup() 
 {
-  Serial.begin(9600);
+  Serial.begin(Variables::VELOCIDAD_DATOS);
   Serial.println("H05ricF45");
   unsigned long time = millis();
   unsigned long tiempo2{0};
@@ -63,7 +63,8 @@ void setup()
       break;
     }
   }
-    //Correr::setup();
+    Correr::setup();
+    Correr::calibracion(calibrar);
 }
 
 /**
@@ -71,7 +72,7 @@ void setup()
  */
 void loop() 
 {
-  Correr::calibracion(calibrar);
+  //Correr::loop();
 }
 
 /**

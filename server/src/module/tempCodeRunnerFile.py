@@ -1,2 +1,1 @@
-
-                    if (puerto == 'COM21'):
+"[true/3]"

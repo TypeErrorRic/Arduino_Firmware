@@ -20,7 +20,7 @@ class Almacenamiento():
 
     def __init__(self, configuracion : dict = {}) -> None:
         self.__configuracion = configuracion
-        self.__datos_arduino : dict = {"primero":1,"segundo":2,"lista" : [1,2,3,5]}
+        self.__datos_arduino : dict = {}
         self.__datos_estadisticos: list = []
         self.__guardar :dict = {}
     
@@ -36,6 +36,9 @@ class Almacenamiento():
     def Cargar_datos(self) -> dict:
         with open(self.ruta_archivo, 'r') as archivo:
             self.__guardar = json.load(archivo)
+            self.__configuracion = self.__guardar.setdefault("configuracion")
+            self.__datos_arduino = self.__guardar.setdefault("Datos_Arduino")
+            self.__datos_estadisticos = self.__guardar.setdefault("Estadistica")
             return self.__guardar
 
     @property
@@ -79,6 +82,5 @@ class Almacenamiento():
 
 if __name__ == '__main__':
     almacenar = Almacenamiento()
-    almacenar.Guardar_datos()
+    almacenar.Cargar_datos()
     print(almacenar.datos_arduino)
-    print(almacenar)

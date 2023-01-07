@@ -15,7 +15,6 @@ namespace Correr
 {
     void setup()
     {
-        Serial.begin(Variables::VELOCIDAD_DATOS);
         Memoria_no_volatil memoria;
         if(Manejo_datos::inicializar())
             Variables_datos = Manejo_datos::get_datos();
@@ -121,6 +120,7 @@ namespace Correr
                 else if (list[1] == "false")
                 {
                     delete[] list;
+                    validacion = false;
                     break;
                 }
             }
@@ -148,6 +148,5 @@ namespace Correr
             }
             delete[] list;
         }
-        validacion = false;
     }
 }

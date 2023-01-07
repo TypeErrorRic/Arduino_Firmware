@@ -1,10 +1,9 @@
 import tkinter
 from logica import Arduino
 from Ventanas import Ventana
+from statistics import mode, median, mean
 
 class Conectado_datos:
-
-    Estadistica: bool = False
 
     def __init__(self, pantalla: Ventana, Dispostivo: Arduino, caja: tkinter.Listbox) -> None:
         self.pantalla: tkinter.Tk = pantalla.mostrar_ventana()
@@ -18,6 +17,8 @@ class Conectado_datos:
         self.listas: list = []
         self.altura: float = 0
         self.peso: float = 0
+        self.Datos_Arduino_final: bool = True
+        self.Estadistica: bool = True
 
     def etiquetas(self) -> None:
         self.ventanas.etiqueta_titulo_movible_main(
@@ -41,6 +42,7 @@ class Conectado_datos:
         self.obtener_datos()
         self.estadistica()
         self.celdad_carga()
+        self.cerrar_all()
 
     def ingrear_peso(self) -> None:
         boton = tkinter.Button(self.pantalla, text="Ing. Peso", command= lambda: self.__desactivar("peso"))
@@ -57,27 +59,19 @@ class Conectado_datos:
         boton.place(relx=0.86, rely=0.41)
 
     def __pedir_datos(self) -> None:
-        if not self.Estadistica:
+        if self.Datos_Arduino_final:
             self.dispositivo.data.clear()
             self.dispositivo.escribir_datos("[true/6]")
-            self.pantalla.after(1400, self.__data_arduino)
-        self.caja.insert(tkinter.END, "Datos cargados desde el arduino")
+            self.caja.insert(tkinter.END, "Datos cargados desde el arduino")
+        else:
+            self.caja.insert(tkinter.END, "Datos Recuperados")
+        self.pantalla.after(1400, self.__data_arduino)
     
     def __data_arduino(self) -> None:
-        if(len(self.dispositivo.data) != 0):
-            for item in self.dispositivo.data:
-                self.listas.append(item)
-            dictionary :dict = {
-                "Tara": self.listas[0],
-                "Peso Total" : self.listas[1],
-                "Radio llave": self.listas[2],
-                "Suma Valores": self.listas[3],
-                "Caudal Total": self.listas[4],
-                "Altura Maxima": self.listas[5]
-            }
-            self.dispositivo.limpiar()
-        else:
-            print("Sin datos")
+        aux16: dict = self.dispositivo.recolectar_datos(self.Datos_Arduino_final)
+        self.Datos_Arduino_final = False
+        for key, value in aux16.items():
+            self.caja.insert(tkinter.END, f"{key} : {value}")
     
     def estadistica(self) -> None:
         boton = tkinter.Button(
@@ -85,20 +79,52 @@ class Conectado_datos:
         boton.place(relx=0.843, rely=0.48)
 
     def conseguir(self) -> None:
-        if not self.Estadistica:
-            self.dispositivo.data.clear()
+        if self.Estadistica:
             self.dispositivo.escribir_datos("[true/3]")
-            self.pantalla.after(2500, self.datos_dias)
+        self.pantalla.after(2500, self.datos_dias)
         self.caja.insert(tkinter.END, "Datos en litros de la cantidad de jugo de caña de los ultimos 30 días")
+        Estadistica_x2 : tkinter.Toplevel = tkinter.Toplevel(background="#2a8d90")
+        Estadistica_x2.title("Estadistica")
+        Estadistica_x2.geometry("380x180")
+        Estadistica_x2.resizable(False, False)
+        #Etiqueta:
+        self.ventanas.etiqueta_titulo(Estadistica_x2,"Medidas de Tendencia Central")
+        #Botones:
+        boton1 = tkinter.Button(Estadistica_x2, text ="Mediana", command=self.mediana)
+        boton1.place(relx=0.1, rely=0.5)
+        boton2 = tkinter.Button(Estadistica_x2, text="Media", command=self.media_ardu)
+        boton2.place(relx=0.3, rely=0.5)
+        boton3 = tkinter.Button(Estadistica_x2, text="Moda", command=self.moda)
+        boton3.place(relx=0.5, rely=0.5)
+        boton4 = tkinter.Button(Estadistica_x2, text="Imprimir datos", command=self.imprimir_datos_dias)
+        boton4.place(relx=0.7, rely=0.5)
+
+    def media_ardu(self) -> None:
+        aux : float = mean(self.dispositivo.Datos_estadisticos)
+        self.caja.insert(tkinter.END, f"La mediana de los datos: {aux}")
+
+    def moda(self) -> None:
+        aux: float = mode(self.dispositivo.Datos_estadisticos)
+        self.caja.insert(tkinter.END, f"La moda de los datos es: {aux}")
+
+    def mediana(self) -> None:
+        aux: float = median(self.dispositivo.Datos_estadisticos)
+        self.caja.insert(tkinter.END, f"La mediana de los datos es: {aux}")
+
+    def imprimir_datos_dias(self) -> None:
+        self.caja.insert(tkinter.END, f"Los datos de los dias son: ")
+        for indx, item in enumerate(self.dispositivo.Datos_estadisticos, start=1):
+            self.caja.insert(tkinter.END, f"Día {indx}: {item}")
 
     def datos_dias(self) -> None:
-        if(len(self.dispositivo.data) != 0):
-            for item in self.dispositivo.data:
-                self.datos.append(item)
-                print(item)
-            self.dispositivo.limpiar()
+        if self.dispositivo.datos_estadisticos_ard(self.Estadistica):
+            self.caja.insert(tkinter.END, "Dato recividos correctamente")
+            self.Estadistica = False
         else:
-            print("Sin_datos")
+            if not self.Estadistica:
+                self.caja.insert(tkinter.END, "Dato ya pedidos")
+            else:
+                self.caja.insert(tkinter.END, "Error en el recivimiento de los datos")
 
     def celdad_carga(self) -> None:
         boton = tkinter.Button(
@@ -136,11 +162,25 @@ class Conectado_datos:
         elif self.__var == "altura":
             aux = "[{0}/7]".format(self.altura)
             self.dispositivo.escribir_datos(aux)
+        self.Datos_Arduino_final = True
+        self.etiqueta.delete(0, 'end')
+        self.__abilitar()
+        self.pantalla.after(1200, self.confirmar_datos_arduino)
+
+    def confirmar_datos_arduino(self):
+        if self.__var == "peso":
+            if self.dispositivo.conection(str(self.peso)):
+                self.caja.insert(tkinter.END, "Dato enviado correctamente")
+            else:
+                self.caja.insert(tkinter.END, "Error enviando dato")
+        elif self.__var == "altura":
+            if self.dispositivo.conection(str(self.altura)):
+                self.caja.insert(tkinter.END, "Dato enviado correctamente")
+            else:
+                self.caja.insert(tkinter.END, "Error enviando dato")
         self.peso = 0
         self.altura = 0
-        self.etiqueta.delete(0, 'end')
-        self.dispositivo.limpiar()
-        self.__abilitar()
+        self.__var = ""
     
     def descartar(self) -> None:
         boton = tkinter.Button(
@@ -226,5 +266,13 @@ class Conectado_datos:
                     elif widget.config('text')[-1] == "Descartar":
                         widget.configure(state="active")
             self.__var = "altura"
+        
+    def cerrar_all(self) -> None:
+        self.pantalla.protocol("WM_DELETE_WINDOW", self.cerrar_principal)
 
-
+    def cerrar_principal(self) -> None:
+        self.dispositivo.escribir_datos("[false/5]")
+        self.pantalla.after(1000, self.terminado)
+    
+    def terminado(self) -> None:
+        self.pantalla.destroy()

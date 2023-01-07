@@ -1,6 +1,7 @@
 #Ignorar archivos:
 .pio/
 **.vscode/
+**__pycache__/
 test/
 Doxyfile
 platformio.ini
@@ -18,5 +19,5 @@ cient/*.json
 client/node_modules/
 
 #Ignore pycache:
-server/**_pycache__
+#server/src/**__pycache__/
 
