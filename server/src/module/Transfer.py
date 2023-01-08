@@ -109,8 +109,8 @@ class Transfer():
             self.hilo = None
     
     def desconectar(self):
-        self.Arduino.close()
         self.__stop_hilo()
+        self.Arduino.close()
 
     def __call__(self) -> dict:
         return self.Arduino.get_settings()

@@ -7,13 +7,13 @@
         "xonxoff": false,
         "dsrdtr": false,
         "rtscts": false,
-        "timeout": 2,
+        "timeout": 5,
         "write_timeout": null,
         "inter_byte_timeout": null
     },
     "Datos_Arduino": {
         "Tara": "20",
-        "Peso Total": "2.70",
+        "Peso Total": "10.00",
         "Radio llave": "10.50",
         "Suma Valores": "1.50",
         "Caudal Total": "1.60",
@@ -50,5 +50,6 @@
         0.0,
         0.0,
         0.0
-    ]
+    ],
+    "Tiempo llenado": 0
 }

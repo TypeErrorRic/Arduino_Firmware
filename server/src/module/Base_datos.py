@@ -23,12 +23,14 @@ class Almacenamiento():
         self.__datos_arduino : dict = {}
         self.__datos_estadisticos: list = []
         self.__guardar :dict = {}
+        self.__tiempo_regr : float = 0
     
     def Guardar_datos(self) -> None:
         self.__guardar = {
                             "configuracion": self.__configuracion, 
                             "Datos_Arduino": self.__datos_arduino, 
-                            "Estadistica": self.__datos_estadisticos
+                            "Estadistica": self.__datos_estadisticos,
+                            "Tiempo llenado": self.__tiempo_regr
                         }
         with open(self.ruta_archivo, 'w') as archivo:
             json.dump(self.__guardar, archivo, indent=4)
@@ -39,6 +41,7 @@ class Almacenamiento():
             self.__configuracion = self.__guardar.setdefault("configuracion")
             self.__datos_arduino = self.__guardar.setdefault("Datos_Arduino")
             self.__datos_estadisticos = self.__guardar.setdefault("Estadistica")
+            self.__tiempo = self.__guardar.setdefault("Tiempo llenado")
             return self.__guardar
 
     @property
@@ -64,6 +67,14 @@ class Almacenamiento():
     @datos_estadisticos.setter
     def datos_estadisticos(self, diccionario: list) -> None:
         self.__datos_estadisticos = diccionario
+
+    @property
+    def tiempo_regr(self) -> float:
+        return self.__tiempo_regr
+    
+    @tiempo_regr.setter
+    def tiempo(self, valor_time: float) -> None:
+        self.__tiempo_regr = valor_time
 
     def __str__(self): 
         aux : str = ""

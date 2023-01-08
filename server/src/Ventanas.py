@@ -28,6 +28,12 @@ class Ventana:
         label.place(relx=posx, rely=posy)
         return label
     
+    def etiqueta_titulo_movible_main2(self, nombre: str, posx: float, posy: float) -> tkinter.Label:
+        label = tkinter.Label(self.ventana, text=nombre,
+                              font="Times 15 bold", bg=self.__color)
+        label.place(relx=posx, rely=posy)
+        return label
+    
     def etiqueta_titulo_movible_main_cambiar(self, posx: float, posy: float, color: str, var: tkinter.StringVar) -> tkinter.Label:
         variable = tkinter.Label(self.ventana, textvariable=var, font="Times 15")
         variable.config(bg = color)

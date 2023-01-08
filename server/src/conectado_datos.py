@@ -21,8 +21,8 @@ class Conectado_datos:
         self.Estadistica: bool = True
 
     def etiquetas(self) -> None:
-        self.ventanas.etiqueta_titulo_movible_main(
-            "Menu de Opciones", 0.8, 0.1)
+        self.ventanas.etiqueta_titulo_movible_main2(
+            "Menu de Opciones", 0.79, 0.1)
         self.etiqueta = tkinter.Entry(self.pantalla, textvariable=self.variable, width=80)
         self.etiqueta.place(relx=0.01, rely=0.9)
         self.etiqueta.config(state="disabled")
@@ -43,6 +43,7 @@ class Conectado_datos:
         self.estadistica()
         self.celdad_carga()
         self.cerrar_all()
+        self.confi_regresion()
 
     def ingrear_peso(self) -> None:
         boton = tkinter.Button(self.pantalla, text="Ing. Peso", command= lambda: self.__desactivar("peso"))
@@ -280,7 +281,12 @@ class Conectado_datos:
     def cerrar_principal(self) -> None:
         if self.dispositivo.estado_conexion():
             self.dispositivo.escribir_datos("[false/5]")
-        self.pantalla.after(1000, self.terminado)
+        self.pantalla.after(500, self.terminado)
     
     def terminado(self) -> None:
+        self.dispositivo.desconectar()
         self.pantalla.destroy()
+    
+    def confi_regresion(self) -> None:
+        boton = tkinter.Button(self.pantalla, text= "Configuracion", command=lambda:print("Hola"), )
+        boton.place(relx=0.83, rely=0.84)
