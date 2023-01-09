@@ -14,6 +14,7 @@ class Botones:
         self.dispositivo: Arduino = Dispostivo
         self.caja = caja
         self.ventanas: Ventana = pantalla
+        self.values_x : list = []
 
     #Funcionalidades para realizar la regresion:
     def __boton_regresion(self, posx: float, posy: float, size: str) -> tkinter.Button:
@@ -79,7 +80,7 @@ class Botones:
         Realizar = tkinter.Button(
             nueva, text="Realizar", command=lambda: self.__regresion_datos(
                 etiqueta1, etiqueta2, etiqueta3, etiqueta4, etiqueta5, pantalla=nueva, estado1=opcion, estado2=opcion2
-            ), bg='lightgreen'
+            ), bg='lightgreen', state="disabled"
         )
         Realizar.place(relx=0.36, rely=0.85)
         # eliminar datos ingresados:
@@ -87,6 +88,18 @@ class Botones:
             nueva, text="Reset", command=lambda: self.__reset(nueva), bg='indian red'
         )
         reset.place(relx=0.53, rely=0.85)
+        # desactivar opciones por un cierto tiempo:
+        self.dispositivo.limpiar()
+        self.dispositivo.escribir_datos("[true/8]")
+        self.pantalla.after(self.dispositivo.Guardar.tiempo, self.__activar_Valores, Realizar)
+
+    def __activar_Valores(self, boton: tkinter.Button) -> None:
+        self.values_x = self.dispositivo.leer_valores_celdad_carga()
+        boton.config(state="active")
+        if len(self.values_x) == 5:
+            self.caja.insert(tkinter.END, "Se recivieron los datos.")
+        else:
+            self.caja.insert(tkinter.END, "No se recivieron los datos.")
 
     def __estado(self, estado: tkinter.IntVar, boton: tkinter.Checkbutton, estado2: tkinter.IntVar):
         if (estado.get() == 1 and estado2.get() == 1):
@@ -123,22 +136,33 @@ class Botones:
                     self.caja.insert(tkinter.END, "Intente de nuevo")
                     break
                 else:
-                    if (indx == 4):
-                        list1: list = [-2, 1, 4, 3, 0]
+                    if indx == 4 and len(self.values_x) == 5:
+                        #list1: list = [-2, 1, 4, 3, 0]
                         aux: str = self.__definir(estado1, estado2)
-                        regresion_final: list = realizar(aux, list1, lista)
+                        regresion_final: list = realizar(aux, self.values_x, lista)
                         self.caja.insert(
                                 tkinter.END, "Valores de la Regresion {}:".format(aux))
                         for element in regresion_final:
                             self.caja.insert(
                                 tkinter.END, "{:.2f}".format(element))
                             self.dispositivo.Regresion(element)
-                        self.pantalla.after(1400, self.confirmar)
-                        self.caja.insert(
-                                tkinter.END, "Regresion configurada")
+                        self.pantalla.after(2000, self.valorar_regresion)
                         pantalla.destroy()
+                    elif len(self.values_x) < 5:
+                        for widget in pantalla.winfo_children():
+                            if isinstance(widget, tkinter.Button):
+                                if widget.config('text')[-1] == "Realizar":
+                                    self.__activar_Valores(widget)
+                                    break
+                        self.caja.insert(tkinter.END, "Valores del eje x no han sido recividos aún completos")
                     else:
                         pass
+    
+    def valorar_regresion(self):
+        if self.dispositivo.confirmar_regresion():
+            self.caja.insert(tkinter.END, "Regresion configurada")
+        else:
+            self.caja.insert(tkinter.END, "Regresion No configurada")
     
     def regresion(self, posx: float, posy: float, size: str) -> None:
         self.__boton_regresion(posx, posy, size)
@@ -178,6 +202,7 @@ class Botones:
             aux.config(state="disabled")
             var.set(self.dispositivo.Port())
             self.caja.insert(tkinter.END, self.dispositivo.conexion)
+            self.dispositivo.limpiar()
     
     #Boton para obtener las opciones:
     def menu_opciones_conexion(self, var: tkinter.StringVar, port: list) -> tkinter.OptionMenu:
@@ -209,6 +234,7 @@ class Botones:
                 elif isinstance(widget, tkinter.Entry):
                     widget.config(state="disabled")
             self.caja.insert(tkinter.END, self.dispositivo.conexion)
+            self.dispositivo.limpiar()
         else:
             self.caja.insert(tkinter.END, self.dispositivo.Errores)
     

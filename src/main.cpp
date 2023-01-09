@@ -20,7 +20,6 @@
 //Elementos de ejecuión:
 #include "..\include\Correr.h"
 
-
 /**
  * @brief Función que se encarga de configurar los parametros inciales de las funciones.
  */

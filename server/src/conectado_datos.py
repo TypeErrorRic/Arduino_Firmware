@@ -288,5 +288,42 @@ class Conectado_datos:
         self.pantalla.destroy()
     
     def confi_regresion(self) -> None:
-        boton = tkinter.Button(self.pantalla, text= "Configuracion", command=lambda:print("Hola"), )
+        boton = tkinter.Button(self.pantalla, text= "Configuracion", command=self.realizar_configuracion)
         boton.place(relx=0.83, rely=0.84)
+    
+    def realizar_configuracion(self) -> None:
+        nueva : tkinter.Toplevel = tkinter.Toplevel(background="#2a8d90")
+        nueva.geometry("380x120")
+        nueva.resizable(False, False)
+        nueva.title("Set the time")
+        self.ventanas.etiqueta_titulo(nueva, "Tiempo de Llenado Tanque")
+        variable = tkinter.StringVar(value="En segundos")
+        etiqueta = tkinter.Entry(nueva, width=35, textvariable=variable)
+        etiqueta.place(relx=0.1, rely=0.4)
+        boton = tkinter.Button(nueva, text="Guardar", command=lambda:self.configuracion_tiempo(variable,etiqueta,nueva))
+        boton.place(relx=0.7, rely=0.4)
+        boton1 = tkinter.Button(nueva, text="Imprimir", command=self.mostrar_confi)
+        boton1.place(relx = 0.4, rely = 0.7)
+    
+    def configuracion_tiempo(self, var: tkinter.StringVar, eti: tkinter.Entry, pantalla: tkinter.Toplevel) -> None:
+        guarda: float
+        try:
+            guarda = float(var.get())
+        except:
+            eti.delete(0, 'end')
+            var.set("")
+            self.caja.insert(tkinter.END, "Dato no valido. Ingrese otro valor.")
+        else:
+            aux_21 : int = int(guarda*1000)
+            self.dispositivo.set_the_time(aux_21)
+            self.caja.insert(tkinter.END, "Dato configurado correctamente.")
+            pantalla.destroy()
+        
+    def mostrar_confi(self) -> None:
+        self.caja.insert(tkinter.END, "Configuración del dispostivio:")
+        for key, value in self.dispositivo.Guardar.configuracion.items():
+            self.caja.insert(tkinter.END, f"{key}: {value}")
+        self.caja.insert(tkinter.END, f"tiempo de llenado: {self.dispositivo.Guardar.tiempo}")
+
+
+

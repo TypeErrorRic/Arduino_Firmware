@@ -23,14 +23,18 @@ class Almacenamiento():
         self.__datos_arduino : dict = {}
         self.__datos_estadisticos: list = []
         self.__guardar :dict = {}
-        self.__tiempo_regr : float = 0
+        self.__tiempo_regr : int = 0
+        self.__values_x : list = []
+        self.__regresion: dict = {}
     
     def Guardar_datos(self) -> None:
         self.__guardar = {
                             "configuracion": self.__configuracion, 
                             "Datos_Arduino": self.__datos_arduino, 
                             "Estadistica": self.__datos_estadisticos,
-                            "Tiempo llenado": self.__tiempo_regr
+                            "Tiempo llenado": self.__tiempo_regr,
+                            "Regresion_x": self.__values_x,
+                            "Regresion": self.__regresion
                         }
         with open(self.ruta_archivo, 'w') as archivo:
             json.dump(self.__guardar, archivo, indent=4)
@@ -41,7 +45,9 @@ class Almacenamiento():
             self.__configuracion = self.__guardar.setdefault("configuracion")
             self.__datos_arduino = self.__guardar.setdefault("Datos_Arduino")
             self.__datos_estadisticos = self.__guardar.setdefault("Estadistica")
-            self.__tiempo = self.__guardar.setdefault("Tiempo llenado")
+            self.__tiempo_regr = self.__guardar.setdefault("Tiempo llenado")
+            self.__values_x = self.__guardar.setdefault("Regresion")
+            self.__regresion = self.__guardar.setdefault("Regresion")
             return self.__guardar
 
     @property
@@ -69,12 +75,28 @@ class Almacenamiento():
         self.__datos_estadisticos = diccionario
 
     @property
-    def tiempo_regr(self) -> float:
+    def tiempo_regr(self) -> int:
         return self.__tiempo_regr
     
     @tiempo_regr.setter
-    def tiempo(self, valor_time: float) -> None:
+    def tiempo(self, valor_time: int) -> None:
         self.__tiempo_regr = valor_time
+    
+    @property
+    def Regresion_values_x(self) -> list:
+        return self.__values_x
+
+    @Regresion_values_x.setter
+    def Resion_values_x(self, valor_list: list) -> None:
+        self.__values_x = valor_list
+    
+    @property
+    def Regresion_metodo(self) -> dict:
+        return self.__regresion
+
+    @Regresion_metodo.setter
+    def Regresion_metodo(self, valor_dict: dict) -> None:
+        self.__regresion = valor_dict
 
     def __str__(self): 
         aux : str = ""

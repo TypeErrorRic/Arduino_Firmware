@@ -1,6 +1,5 @@
 from module.Transfer import Transfer
 from module.Base_datos import Almacenamiento
-import time
 
 class Arduino(Transfer):
 
@@ -28,6 +27,7 @@ class Arduino(Transfer):
         aux = aux + "0]"
         print(aux)
         super().escribir_datos(aux)
+        self.guardar_valores_regresion(lista)
 
     def Regresion(self, value : float):
         if (contador := self.__contador2 + 1) <= (3):
@@ -40,6 +40,33 @@ class Arduino(Transfer):
                 self.Guardar.datos_arduino = self.__Regresion
                 self.__Enviar_valores_regresion(list(self.__Regresion.values()))
                 self.Guardar.Guardar_datos()
+
+    def confirmar_regresion(self) -> bool:
+        if self.Arduino.is_open:
+            if self.señal.isSet():
+                count: int = 0 
+                try:
+                    if(len(self.data) == 3):
+                        for indx, element in enumerate(self.data , start=0):
+                            if(element == self.data[indx]):
+                                count += 1
+                        if count == 3:
+                            self.limpiar()
+                            return True
+                        else:
+                            self.limpiar()
+                            return False
+                    else:
+                        return False
+                except ValueError:
+                    self.limpiar()
+                    return False
+            else:
+                print("Hilo fallo")
+                self.Arduino.close()
+                return False
+        else:
+            return False
 
     def conection(self, value: str) -> bool:
         if self.Arduino.is_open:
@@ -102,6 +129,42 @@ class Arduino(Transfer):
             else:
                 print("Sin datos")
         return self.Guardar.datos_arduino
+
+    def set_the_time(self, value: int) -> None:
+        self.Guardar.tiempo = value
+        self.Guardar.Guardar_datos()
+
+    def leer_valores_celdad_carga(self) -> list:
+        aux_list_regre: list = []
+        if(len(self.data) == 5):
+            for element in self.data:
+                try:
+                    variable : float = float(element)
+                    aux_list_regre.append(variable)
+                except ValueError:
+                    self.Errores = "Error en el recivimiento del mensaje."
+                    pass
+            else:
+                self.__guardar_Value_x(aux_list_regre)
+                self.limpiar()
+                return aux_list_regre.copy()
+        return aux_list_regre
+    
+    def __guardar_Value_x(self, lista: list ):
+        self.Guardar.Resion_values_x = lista
+        self.Guardar.Guardar_datos()
+
+    def guardar_valores_regresion(self, lista : list) -> None:
+        if len(lista) == 3:
+            self.Guardar.Regresion_metodo = {
+                "a0" : lista[0],
+                "x1" : lista[1],
+                "x2" : lista[2]
+            }
+            self.Guardar.Guardar_datos()
+        else:
+            pass
+                
 
 if __name__ == '__main__':
     logic = Arduino(9600)

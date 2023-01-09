@@ -4,6 +4,7 @@
 #include "C:\Users\user\Desktop\Taller_de_Ing\Azucarado\include\Config.h"
 #include <Memoria_no_volatil.h>
 #include <HX711.h>
+//#include <LiquidCrystal.h>
 
 #define elementos 3
 #define pi 3.14

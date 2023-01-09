@@ -153,6 +153,19 @@ namespace Correr
                 Manejo_datos::guarda_config_peso(Variables_datos.altura);
                 Serial.println(Variables_datos.altura);
             }
+            //Valores x de la regresion:
+            else if(list[0] == "8")
+            {
+                if (list[1] == "true")
+                {
+                    float array_regr[5] = {-2, 1, 4, 3, 0};
+                    Serial.println(array_regr[0]);
+                    Serial.println(array_regr[1]);
+                    Serial.println(array_regr[2]);
+                    Serial.println(array_regr[3]);
+                    Serial.println(array_regr[4]);
+                }
+            }
             delete[] list;
         }
     }
