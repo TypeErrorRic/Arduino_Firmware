@@ -26,6 +26,7 @@ class Almacenamiento():
         self.__tiempo_regr : int = 0
         self.__values_x : list = []
         self.__regresion: dict = {}
+        self.__posicion: float = 0
     
     def Guardar_datos(self) -> None:
         self.__guardar = {
@@ -34,7 +35,8 @@ class Almacenamiento():
                             "Estadistica": self.__datos_estadisticos,
                             "Tiempo llenado": self.__tiempo_regr,
                             "Regresion_x": self.__values_x,
-                            "Regresion": self.__regresion
+                            "Regresion": self.__regresion,
+                            "Posicion": self.__posicion
                         }
         with open(self.ruta_archivo, 'w') as archivo:
             json.dump(self.__guardar, archivo, indent=4)
@@ -48,6 +50,7 @@ class Almacenamiento():
             self.__tiempo_regr = self.__guardar.setdefault("Tiempo llenado")
             self.__values_x = self.__guardar.setdefault("Regresion")
             self.__regresion = self.__guardar.setdefault("Regresion")
+            self.__posicion = self.__guardar.setdefault("Posicion")
             return self.__guardar
 
     @property
@@ -97,6 +100,14 @@ class Almacenamiento():
     @Regresion_metodo.setter
     def Regresion_metodo(self, valor_dict: dict) -> None:
         self.__regresion = valor_dict
+
+    @property
+    def Posicion_dia(self) -> float:
+        return self.__posicion
+    
+    @Posicion_dia.setter
+    def Posicion_dia(self, value:float) -> None:
+        self.__posicion = value
 
     def __str__(self): 
         aux : str = ""

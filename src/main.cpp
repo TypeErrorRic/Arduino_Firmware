@@ -19,7 +19,6 @@
 
 //Elementos de ejecuión:
 #include "..\include\Correr.h"
-
 /**
  * @brief Función que se encarga de configurar los parametros inciales de las funciones.
  */
@@ -28,6 +27,7 @@ bool calibrar{true};
 
 void setup() 
 {
+  Variables::Lcd.begin(16, 2);
   Serial.begin(Variables::VELOCIDAD_DATOS);
   Serial.println("H05ricF45");
   unsigned long time = millis();
@@ -36,6 +36,8 @@ void setup()
   while (calibrar)
   {
     tiempo2 = millis();
+    Variables::Lcd.setCursor(0, 0);
+    Variables::Lcd.print("Iniciando");
     if(tiempo2 <= (time+5000))
     {
       while (Serial.available())
@@ -80,6 +82,8 @@ void setup()
 void loop() 
 {
   //Correr::loop();
+  Variables::Lcd.setCursor(0,0);
+  Variables::Lcd.print("Hola ricardo.");
 }
 
 /**

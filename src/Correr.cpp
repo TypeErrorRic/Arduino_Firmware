@@ -41,15 +41,18 @@ namespace Correr
             if (comuntar_master == 't')
             {
                 var.conmutador = true;
-                Serial.println("Conmutador: ON");
+                Variables::Lcd.print("ON");
                 Serial.readString();
             }
         }
     }
+
     void calibracion(bool &validacion)
     {
         while(validacion)
         {
+            Variables::Lcd.setCursor(0, 0);
+            Variables::Lcd.print("Calibrando...");
             short size{0};
             String *list = Lectura_data::Captura_eventos(size);
             //Regresion Cuadratica:
@@ -103,6 +106,7 @@ namespace Correr
                     {
                         Serial.println(Variables_datos.lista_dias[i]);
                     }
+                    Serial.println(Variables_datos.tiempo.dia);
                 }
             }
             //Limpiar valores de la lista:

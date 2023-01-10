@@ -2,6 +2,7 @@
 #define CONFIGURACION_H
 
 #include <Arduino.h>
+#include "C:\Users\user\Desktop\Taller_de_Ing\Azucarado\.pio\libdeps\uno\LiquidCrystal\src\LiquidCrystal.h"
 
 #define Nfilas 5
 
@@ -9,6 +10,7 @@
 namespace Variables
 {
     constexpr int VELOCIDAD_DATOS{9600};
+    static LiquidCrystal Lcd(7, 6, 5, 4, 3, 2);
 };
 
 //Variables de configuracion de funcionamiento:

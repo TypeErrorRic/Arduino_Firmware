@@ -82,24 +82,28 @@ class Conectado_datos:
     def conseguir(self) -> None:
         if self.Estadistica:
             self.dispositivo.escribir_datos("[true/3]")
-        self.pantalla.after(2500, self.datos_dias)
         self.caja.insert(tkinter.END, "Datos en litros de la cantidad de jugo de caña de los ultimos 30 días")
         Estadistica_x2 : tkinter.Toplevel = tkinter.Toplevel(background="#2a8d90")
         Estadistica_x2.title("Estadistica")
         Estadistica_x2.geometry("380x180")
         Estadistica_x2.resizable(False, False)
+        self.pantalla.after(2500, self.datos_dias, Estadistica_x2)
         #Etiqueta:
         self.ventanas.etiqueta_titulo(Estadistica_x2,"Medidas de Tendencia Central")
         #Botones:
-        boton1 = tkinter.Button(Estadistica_x2, text ="Mediana", command=self.mediana)
+        boton1 = tkinter.Button(Estadistica_x2, text ="Mediana", command=self.mediana, state="disabled")
         boton1.place(relx=0.1, rely=0.5)
-        boton2 = tkinter.Button(Estadistica_x2, text="Media", command=self.media_ardu)
+        boton2 = tkinter.Button(
+            Estadistica_x2, text="Media", command=self.media_ardu, state="disabled")
         boton2.place(relx=0.3, rely=0.5)
-        boton3 = tkinter.Button(Estadistica_x2, text="Moda", command=self.moda)
+        boton3 = tkinter.Button(
+            Estadistica_x2, text="Moda", command=self.moda, state="disabled")
         boton3.place(relx=0.5, rely=0.5)
-        boton4 = tkinter.Button(Estadistica_x2, text="Imprimir datos", command=self.imprimir_datos_dias)
+        boton4 = tkinter.Button(
+            Estadistica_x2, text="Imprimir datos", command=self.imprimir_datos_dias, state="disabled")
         boton4.place(relx=0.7, rely=0.5)
-        boton5 = tkinter.Button(Estadistica_x2, text="Borrar datos", command=self.borrar_datos_estadisticos)
+        boton5 = tkinter.Button(
+            Estadistica_x2, text="Borrar datos", command=self.borrar_datos_estadisticos, state="disabled")
         boton5.place(relx=0.4, rely=0.8)
 
     def media_ardu(self) -> None:
@@ -116,7 +120,7 @@ class Conectado_datos:
 
     def imprimir_datos_dias(self) -> None:
         self.caja.insert(tkinter.END, f"Los datos de los dias son: ")
-        for indx, item in enumerate(self.dispositivo.Datos_estadisticos, start=1):
+        for indx, item in enumerate(self.dispositivo.Guardar.datos_estadisticos, start=1):
             self.caja.insert(tkinter.END, f"Día {indx}: {item}")
 
     def borrar_datos_estadisticos(self) -> None:
@@ -124,13 +128,21 @@ class Conectado_datos:
         self.Estadistica = True
         self.pantalla.after(2000, self.datos_dias)
 
-    def datos_dias(self) -> None:
+    def datos_dias(self, pantalla: tkinter.Toplevel) -> None:
         if self.dispositivo.datos_estadisticos_ard(self.Estadistica):
             self.caja.insert(tkinter.END, "Dato recividos correctamente")
             self.Estadistica = False
+            for widget in pantalla.winfo_children():
+                if isinstance(widget, tkinter.Button):
+                    widget.config(state="active")
+            self.dispositivo.lista_elementos_calculos()
         else:
             if not self.Estadistica:
                 self.caja.insert(tkinter.END, "Dato ya pedidos")
+                for widget in pantalla.winfo_children():
+                    if isinstance(widget, tkinter.Button):
+                        widget.config(state="active")
+                self.dispositivo.lista_elementos_calculos()
             else:
                 self.caja.insert(tkinter.END, "Error en el recivimiento de los datos")
 

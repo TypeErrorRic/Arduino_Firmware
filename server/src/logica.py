@@ -98,19 +98,30 @@ class Arduino(Transfer):
 
     def datos_estadisticos_ard(self, validar: bool) -> bool:
         if validar:
-            if len(self.data) == 30:
-                for item in self.data:
+            if len(self.data) == 31:
+                for indx, item in enumerate(self.data, start=1):
                     try:
-                        self.Datos_estadisticos.append(float(item))
+                        if indx != 31:
+                            self.Datos_estadisticos.append(float(item))
+                        else:
+                            self.Guardar.Posicion_dia = float(item)
+                            if(self.Datos_estadisticos[29] != 0):
+                                self.Datos_estadisticos = self.Datos_estadisticos[self.Guardar.Posicion_dia:] + self.Datos_estadisticos[:self.Guardar.Posicion_dia]
                     except ValueError:
                         pass
-                self.limpiar()
-                self.Guardar.datos_estadisticos = self.Datos_estadisticos
-                self.Guardar.Guardar_datos()
+                else:
+                    self.limpiar()
+                    self.Guardar.datos_estadisticos = self.Datos_estadisticos.copy()
+                    self.Guardar.Guardar_datos()
                 return True
             else:
                 return False
         return False
+    
+    def lista_elementos_calculos(self) -> None:
+        if self.Datos_estadisticos.count(0) != 0:
+            for element in range(self.Datos_estadisticos.count(0)):
+                self.Datos_estadisticos.pop(self.Datos_estadisticos.index(0))
 
     def recolectar_datos(self, validacion: bool) -> dict:
         if validacion:
