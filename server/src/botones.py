@@ -41,6 +41,7 @@ class Botones:
         opcion = tkinter.IntVar()
         opcion2 = tkinter.IntVar()
         boton_opcione2: tkinter.Checkbutton
+        Evaluacion : tkinter.StringVar = tkinter.StringVar()
         # botones de selecion:
         boton_opcione1 = tkinter.Checkbutton(
             nueva, text="Regresion cuadratica", variable=opcion, command=lambda: self.__estado(
@@ -49,49 +50,85 @@ class Botones:
         )
         print(boton_opcione1.config('text')[-1])
         boton_opcione1.place(relx=0.15, rely=0.15)
+        boton_opcione1.config(state="disabled")
         boton_opcione1.deselect()
         boton_opcione2 = tkinter.Checkbutton(
             nueva, text="Regresion lineal", variable=opcion2, command=lambda: self.__estado(
                 opcion2, boton_opcione1, opcion
             ), background=u'#2a8d90'
         )
+        boton_opcione2.config(state="disabled")
         boton_opcione2.place(relx=0.6, rely=0.15)
         boton_opcione2.deselect()
+        # Botones de modificacion:
         # Crear etiquetas 1:
         self.ventanas.etiqueta_titulo_movible(
             nueva, "Nivel del 20%", 0.4, 0.29)
-        etiqueta1 = self.ventanas.crear_entry_secundaria(nueva, 0.25, 0.34)
+        etiqueta1, et1 = self.ventanas.crear_entry_secundaria(nueva, 0.25, 0.34)
+        tkinter.Button(nueva, text="Modificar 1", command=lambda: et1.config(
+            state="normal")).place(relx=0.61, rely=0.335)
+        etiqueta1.set(f"{self.dispositivo.Guardar.Regresion_values_y[0]}")
         # Crear etiquetas 2:
         self.ventanas.etiqueta_titulo_movible(
             nueva, "Nivel del 40%", 0.4, 0.39)
-        etiqueta2 = self.ventanas.crear_entry_secundaria(nueva, 0.25, 0.44)
+        etiqueta2, et2 = self.ventanas.crear_entry_secundaria(nueva, 0.25, 0.44)
+        tkinter.Button(nueva, text="Modificar 2", command=lambda: et2.config(
+            state="normal")).place(relx=0.61, rely=0.435)
+        etiqueta2.set(f"{self.dispositivo.Guardar.Regresion_values_y[1]}")
         # Crear etiquetas 3:
         self.ventanas.etiqueta_titulo_movible(
             nueva, "Nivel del 60%", 0.4, 0.49)
-        etiqueta3 = self.ventanas.crear_entry_secundaria(nueva, 0.25, 0.54)
+        etiqueta3, et3 = self.ventanas.crear_entry_secundaria(nueva, 0.25, 0.54)
+        tkinter.Button(nueva, text="Modificar 3", command=lambda: et3.config(
+            state="normal")).place(relx=0.61, rely=0.535)
+        etiqueta3.set(f"{self.dispositivo.Guardar.Regresion_values_y[2]}")
         # Crear etiquetas 4:
         self.ventanas.etiqueta_titulo_movible(
             nueva, "Nivel del 80%", 0.4, 0.59)
-        etiqueta4 = self.ventanas.crear_entry_secundaria(nueva, 0.25, 0.64)
+        etiqueta4, et4 = self.ventanas.crear_entry_secundaria(nueva, 0.25, 0.64)
+        tkinter.Button(nueva, text="Modificar 4", command=lambda: et4.config(
+            state="normal")).place(relx=0.61, rely=0.635)
+        etiqueta4.set(f"{self.dispositivo.Guardar.Regresion_values_y[3]}")
         # Crear etiquetas 4:
-        self.ventanas.etiqueta_titulo_movible(
-            nueva, "Nivel del 90%", 0.4, 0.69)
-        etiqueta5 = self.ventanas.crear_entry_secundaria(nueva, 0.25, 0.74)
+        etiqueta5 : tkinter.StringVar = tkinter.StringVar()
+        etiqueta5.set(str(
+            self.dispositivo.Guardar.datos_arduino.setdefault("Altura Maxima"))
+        )
+        #Botones de modificacion:
         Realizar = tkinter.Button(
             nueva, text="Realizar", command=lambda: self.__regresion_datos(
                 etiqueta1, etiqueta2, etiqueta3, etiqueta4, etiqueta5, pantalla=nueva, estado1=opcion, estado2=opcion2
             ), bg='lightgreen', state="disabled"
         )
-        Realizar.place(relx=0.36, rely=0.85)
+        Realizar.place(relx=0.36, rely=0.73)
         # eliminar datos ingresados:
         reset = tkinter.Button(
             nueva, text="Reset", command=lambda: self.__reset(nueva), bg='indian red'
         )
-        reset.place(relx=0.53, rely=0.85)
+        reset.place(relx=0.53, rely=0.73)
+        reset.config(state="disabled")
+        # Boton para empezar llenar:
+        tkinter.Button(nueva, text= "Empezar Llenado", command=lambda: self.llenar_tanque(
+            Realizar, nueva)).place(relx = 0.36,rely = 0.85)
+    
+    def llenar_tanque(self, Realizar: tkinter.Button, nueva: tkinter.Toplevel) -> None:
         # desactivar opciones por un cierto tiempo:
         self.dispositivo.limpiar()
         self.dispositivo.escribir_datos("[true/8]")
         self.pantalla.after(self.dispositivo.Guardar.tiempo, self.__activar_Valores, Realizar)
+        for widget in nueva.winfo_children():
+            if isinstance(widget, tkinter.Button):
+                if widget.config("text")[-1] == "Empezar Llenado":
+                    widget.config(state="disabled")
+                elif widget.config("text")[-1] == "Realizar":
+                    widget.config(background="lightgreen")
+                elif widget.config("text")[-1] == "Reset":
+                    widget.config(background="indian red")
+                else:
+                    widget.config(state="active")
+            elif isinstance(widget, tkinter.Checkbutton):
+                widget.config(state="active")
+                widget.config(background=u"#2a8d90")
 
     def __activar_Valores(self, boton: tkinter.Button) -> None:
         self.values_x = self.dispositivo.leer_valores_celdad_carga()
@@ -126,7 +163,7 @@ class Botones:
             for indx, element in enumerate(args, start=0):
                 try:
                     aux5: str = element.get()
-                    if float(aux5) > -5:
+                    if float(aux5) > 0:
                         lista.append(float(aux5))
                     else:
                         raise ValueError
@@ -138,8 +175,14 @@ class Botones:
                 else:
                     if indx == 4 and len(self.values_x) == 5:
                         #list1: list = [-2, 1, 4, 3, 0]
+                        ele_regr : dict = {}
+                        regresion_final: list = []
                         aux: str = self.__definir(estado1, estado2)
-                        regresion_final: list = realizar(aux, self.values_x, lista)
+                        regresion_final, ele_regr = realizar(aux, self.values_x, lista)
+                        self.caja.insert(tkinter.END, "Parejas Peso - Altura:")
+                        for key, value in ele_regr.items():
+                            self.caja.insert(tkinter.END, f"{key} \t {value}")
+                        self.dispositivo.guardar_valores_y(list(ele_regr.values()))
                         self.caja.insert(
                                 tkinter.END, "Valores de la Regresion {}:".format(aux))
                         for element in regresion_final:
@@ -170,8 +213,9 @@ class Botones:
     def __reset(self, pantalla: tkinter.Toplevel) -> None:
         for widget in pantalla.winfo_children():
             if isinstance(widget, tkinter.Entry):
-                widget.delete(0, 'end')
-                widget.insert(0, '0')
+                if widget["state"] == "normal":
+                    widget.delete(0, 'end')
+                    widget.insert(0, '0')
             elif isinstance(widget, tkinter.Checkbutton):
                 widget.deselect()
 

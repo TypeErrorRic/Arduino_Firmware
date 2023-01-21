@@ -55,10 +55,13 @@ class Ventana:
         label.place(relx=posx, rely=posy)
         return label
 
-    def crear_entry_secundaria(self, pantalla : tkinter.Toplevel, sizex : float, sizey: float) -> tkinter.StringVar:
+    def crear_entry_secundaria(self, pantalla : tkinter.Toplevel, sizex : float, sizey: float):
         variable = tkinter.StringVar(value="0")
-        tkinter.Entry(pantalla, width=self.width, textvariable=variable).place(relx=sizex, rely=sizey)
-        return variable
+        tk = tkinter.Entry(pantalla, width=self.width, textvariable=variable)
+        tk.place(relx=sizex, rely=sizey)
+        tk.config(width=20)
+        tk.config(state="disabled")
+        return variable, tk
     
     def scrow_bar(self, listbox: tkinter.Listbox) -> None:
         scroll = tkinter.Scrollbar(self.ventana, command=listbox.yview)

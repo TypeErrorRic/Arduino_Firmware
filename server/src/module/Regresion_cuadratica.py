@@ -16,7 +16,7 @@ class Matrices:
 
     def Update(self, value_x: float, value_y: float) -> bool:
         self.contador += 1
-        if (contador := self.contador % (self.size)) != (self.size - 1):
+        if (contador := self.contador % (self.size)) != (self.size):
             self.contador = contador
             self.y[contador] = value_y
             self.x[contador] = value_x
@@ -50,15 +50,15 @@ class Matrices:
         matrices[2][3] = sum_yx2
         return matrices
 
-    def get_Matriz(self) -> None:
-        print("Valores: ")
-        for i in range(self.size):
-            for j in range(2):
-                if j == 0:
-                    print(f"{self.x[i]} \t", end=" ")
-                else:
-                    print(self.y[i])
-        print("Matriz obtenida")
+    def get_Matriz(self) -> dict:
+        values: dict = {
+            self.x[0]: self.y[0],
+            self.x[1]: self.y[1],
+            self.x[2]: self.y[2],
+            self.x[3]: self.y[3],
+            self.x[4]: self.y[4],
+        }
+        return values
 
 #Regresion cuadratica:
 
@@ -66,6 +66,7 @@ class Regresion_Cuadratica(Matrices):
     
     Realizar : bool = True
     Num_test: int = 0
+    elementos_reg: dict = {}
 
     def __init__(self, list_x : list, list_y: list) -> None:
         super().__init__()
@@ -79,7 +80,7 @@ class Regresion_Cuadratica(Matrices):
                 continue
             else:
                 break
-        super().get_Matriz() #activar en caso de ver los datos ingresados
+        self.elementos_reg = super().get_Matriz()
         self.Matriz: list = super().Calcular_matriz()
     
     def __Multiplicacion_const(self, num: int, fila: int) -> None:

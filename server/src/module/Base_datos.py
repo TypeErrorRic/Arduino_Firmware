@@ -27,6 +27,7 @@ class Almacenamiento():
         self.__values_x : list = []
         self.__regresion: dict = {}
         self.__posicion: float = 0
+        self.__alturas_y : list = []
     
     def Guardar_datos(self) -> None:
         self.__guardar = {
@@ -34,24 +35,25 @@ class Almacenamiento():
                             "Datos_Arduino": self.__datos_arduino, 
                             "Estadistica": self.__datos_estadisticos,
                             "Tiempo llenado": self.__tiempo_regr,
-                            "Regresion_x": self.__values_x,
+                            "Valores_x": self.__values_x,
                             "Regresion": self.__regresion,
-                            "Posicion": self.__posicion
+                            "Posicion": self.__posicion,
+                            "Valores_y" : self.__alturas_y
                         }
         with open(self.ruta_archivo, 'w') as archivo:
             json.dump(self.__guardar, archivo, indent=4)
     
-    def Cargar_datos(self) -> dict:
+    def Cargar_datos(self) -> None:
         with open(self.ruta_archivo, 'r') as archivo:
             self.__guardar = json.load(archivo)
             self.__configuracion = self.__guardar.setdefault("configuracion")
             self.__datos_arduino = self.__guardar.setdefault("Datos_Arduino")
             self.__datos_estadisticos = self.__guardar.setdefault("Estadistica")
             self.__tiempo_regr = self.__guardar.setdefault("Tiempo llenado")
-            self.__values_x = self.__guardar.setdefault("Regresion")
+            self.__values_x = self.__guardar.setdefault("Valores_x")
             self.__regresion = self.__guardar.setdefault("Regresion")
             self.__posicion = self.__guardar.setdefault("Posicion")
-            return self.__guardar
+            self.__alturas_y = self.__guardar.setdefault("Valores_y")
 
     @property
     def configuracion(self) -> dict:
@@ -86,12 +88,14 @@ class Almacenamiento():
         self.__tiempo_regr = valor_time
     
     @property
-    def Regresion_values_x(self) -> list:
+    def Regresion_values_x_regr(self) -> list:
         return self.__values_x
-
-    @Regresion_values_x.setter
-    def Resion_values_x(self, valor_list: list) -> None:
-        self.__values_x = valor_list
+    
+    @Regresion_values_x_regr.setter
+    def Regresion_values_x_regr(self, lista_values: list) -> None:
+        self.__values_x.clear()
+        for element in lista_values:
+            self.__values_x.append(element)
     
     @property
     def Regresion_metodo(self) -> dict:
@@ -108,6 +112,10 @@ class Almacenamiento():
     @Posicion_dia.setter
     def Posicion_dia(self, value:float) -> None:
         self.__posicion = value
+
+    @property
+    def Regresion_values_y(self) -> list:
+        return self.__alturas_y
 
     def __str__(self): 
         aux : str = ""

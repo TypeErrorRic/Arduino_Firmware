@@ -32,6 +32,7 @@ class Functional
         bool pass_f; //Está variable se usa para pasar del estado 5 al estado 4. 
         bool exceso; //Está variable se usa para pasar del estado 4 al estado 5;
         static sensores sensor;
+        static bool conmutar;
 
     protected:
         bool estado_90(bool array[5]);
@@ -50,6 +51,7 @@ class Functional
         bool terminar_proceso(bool array[5], char& aux);
         void Encender(bool array[5]);
         void llenado_nivel(bool array[5], bool descender);
+        void Encendido(bool values);
 };
 
 

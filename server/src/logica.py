@@ -5,7 +5,6 @@ class Arduino(Transfer):
 
     Guardar : Almacenamiento = Almacenamiento()
     Datos_estadisticos : list  = []
-    Diccionario_arduino : dict = {}
 
     def __new__(cls, baudios: int, listas: list = [], variable: str = ""):
         cls.port_list = listas
@@ -37,7 +36,6 @@ class Arduino(Transfer):
                 self.__Regresion.setdefault(f"x{contador}", value)
             self.__contador2 = contador
             if(self.__contador2 == 3):
-                self.Guardar.datos_arduino = self.__Regresion
                 self.__Enviar_valores_regresion(list(self.__Regresion.values()))
                 self.Guardar.Guardar_datos()
 
@@ -46,6 +44,7 @@ class Arduino(Transfer):
             if self.señal.isSet():
                 count: int = 0 
                 try:
+                    print(self.data)
                     if(len(self.data) == 3):
                         for indx, element in enumerate(self.data , start=0):
                             if(element == self.data[indx]):
@@ -161,8 +160,8 @@ class Arduino(Transfer):
                 return aux_list_regre.copy()
         return aux_list_regre
     
-    def __guardar_Value_x(self, lista: list ):
-        self.Guardar.Resion_values_x = lista
+    def __guardar_Value_x(self, lista: list):
+        self.Guardar.Regresion_values_x_regr = lista
         self.Guardar.Guardar_datos()
 
     def guardar_valores_regresion(self, lista : list) -> None:
@@ -175,6 +174,15 @@ class Arduino(Transfer):
             self.Guardar.Guardar_datos()
         else:
             pass
+    
+    def guardar_valores_y(self, lista_valores_y: list) -> None:
+        if len(lista_valores_y) == 5:
+            self.Guardar.Regresion_values_y.clear()
+            for element in lista_valores_y:
+                self.Guardar.Regresion_values_y.append(element)
+            self.Guardar.Guardar_datos()
+        else:
+            print("Error guardando altura")
                 
 
 if __name__ == '__main__':

@@ -148,7 +148,7 @@ class Transfer():
             if(aux == "1"):
                 break
             if(aux == "0"):
-                self.escribir_datos("[true/3]")
+                self.escribir_datos("[3.4/3.5/2.5/0]")
                 print("escrito")
     
     def Reconectar(self, com:str) -> bool:
@@ -269,6 +269,7 @@ class Transfer():
 
 if __name__ == '__main__':
     arduino = Transfer(9600)
+    arduino.comprobar_data()
     """
     aux = input("valor")
     arduino.Reconectar("")

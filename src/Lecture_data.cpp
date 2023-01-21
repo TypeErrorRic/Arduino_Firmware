@@ -13,7 +13,7 @@
 
 // Variables globales de las funciones:
 static int dataReal{0}, dataDecimal{0}, dataPow{1};
-static bool isDecimalStage{false}, validacion{true}, validacion1{true}, validacion2{true};
+static bool isDecimalStage{false}, validacion{true}, validacion1{true}, validacion2{true}, isNegative{false};
 static unsigned short contador{0};
 static bool siguiente{true};
 float data{0};
@@ -39,8 +39,14 @@ namespace Lectura_data
             if (count < size && contador < Size - 1)
             {
                 count++;
+                if (aux == '-' && contador == 0 && validacion2)
+                {
+                    isNegative = -1;
+                    validacion2 = false;
+                    contador++;
+                }
                 // Se encagara de detectar si es un número decimal.
-                if ((aux == '.' || aux == ',') && validacion1 && contador != 0)
+                else if ((aux == '.' || aux == ',') && validacion1 && contador != 0)
                 {
                     isDecimalStage = true;
                     validacion1 = false;
@@ -79,6 +85,7 @@ namespace Lectura_data
                 validacion1 = true;
                 validacion2 = true;
                 siguiente = false;
+                isNegative = false;
                 break;
             }
             // Se encarga de indicar que se ha incluido valores no númericos; por lo que, ignora la toma de datos.
@@ -92,6 +99,7 @@ namespace Lectura_data
                 validacion1 = true;
                 validacion2 = true;
                 validacion = true;
+                isNegative = false;
                 break;
             }
         }

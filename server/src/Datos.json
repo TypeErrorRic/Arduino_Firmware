@@ -7,22 +7,22 @@
         "xonxoff": false,
         "dsrdtr": false,
         "rtscts": false,
-        "timeout": 2,
+        "timeout": 5,
         "write_timeout": null,
         "inter_byte_timeout": null
     },
     "Datos_Arduino": {
-        "Tara": "20",
-        "Peso Total": "10.00",
+        "Tara": "210",
+        "Peso Total": "12.30",
         "Radio llave": "10.50",
         "Suma Valores": "1.50",
         "Caudal Total": "1.60",
         "Altura Maxima": "1.80"
     },
     "Estadistica": [
-        12.5,
-        12.5,
-        12.5,
+        0.0,
+        0.0,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -51,16 +51,25 @@
         0.0,
         0.0
     ],
-    "Tiempo llenado": 5000,
-    "Regresion_x": {
-        "a0": 1.1428571428571428,
-        "x1": 0.3896103896103897,
-        "x2": 0.06493506493506493
-    },
+    "Tiempo llenado": 7000,
+    "Valores_x": [
+        -2.0,
+        1.0,
+        4.0,
+        3.0,
+        0.0
+    ],
     "Regresion": {
-        "a0": 1.1428571428571428,
-        "x1": 0.3896103896103897,
-        "x2": 0.06493506493506493
+        "a0": 1.9142857142857148,
+        "x1": 0.4753246753246754,
+        "x2": -0.02077922077922084
     },
-    "Posicion": 3.0
+    "Posicion": 0.0,
+    "Valores_y": [
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        1.8
+    ]
 }

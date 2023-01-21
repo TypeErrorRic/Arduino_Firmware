@@ -2,6 +2,7 @@
 #define MANEJO_DATOS_H
 
 #include <Memoria_no_volatil.h>
+#include "Config.h"
 
 namespace Manejo_datos
 {

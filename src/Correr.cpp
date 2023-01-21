@@ -20,30 +20,32 @@ namespace Correr
             Variables_datos = Manejo_datos::get_datos();
         array[0] =Variables_datos.values.x0;
         array[1] = Variables_datos.values.x1;
-        array[2] = Variables_datos.values.x0;
+        array[2] = Variables_datos.values.x2;
         run.init(array,Variables_datos.altura);
-        var.conmutador = true;
+        var.conmutador = false;
         var.Valvula_manual = false;
         var.ejecucion = true;
         for (int i = 0; i < 5; i++) var.array[i] = false;
-        //Serial.println("Simulacion real del Diagrama de estados.");
     }
     void loop()
     {
+        Variables::Lcd.setCursor(0, 0);
+        if(digitalRead(10) == 0)
+        Variables::Lcd.print("Estado S0");
         if (var.conmutador)
         {
+            Variables::Lcd.clear();
+            Variables::Lcd.print("Estado S1.");
+            delay(1000);
             run.Encender(var.array);
             run.llenado_nivel(var.array, false);
         }
-        else if(Serial.available() > 0)
+        else if(digitalRead(10) == 1)
         {
-            auto comuntar_master = (char)Serial.read();
-            if (comuntar_master == 't')
-            {
-                var.conmutador = true;
-                Variables::Lcd.print("ON");
-                Serial.readString();
-            }
+            var.conmutador = true;
+            Variables::Lcd.setCursor(0,0);
+            Variables::Lcd.print("Conmutador ON");
+            delay(1000);
         }
     }
 
@@ -80,7 +82,9 @@ namespace Correr
                 short size{0};
                 if(list[1] == "true")
                 {
-                    while(true)
+                    Variables::Lcd.clear();
+                    Variables_datos.t = 0;
+                    while (true)
                     {
                         if(caudal.calibracion_escala(Variables_datos.t, Variables_datos.suma_valores, realizar))
                             break;
@@ -162,7 +166,8 @@ namespace Correr
             {
                 if (list[1] == "true")
                 {
-                    float array_regr[5] = {-2, 1, 4, 3, 0};
+                    float array_regr[5];
+                    caudal.Calibracion_niveles(array_regr);
                     Serial.println(array_regr[0]);
                     Serial.println(array_regr[1]);
                     Serial.println(array_regr[2]);

@@ -94,8 +94,9 @@ namespace Manejo_datos
             error = '1';
         if (error != '0')
         {
-            //Serial.print("Error: "); //Habilitar luego.
-            //Serial.println(error);
+            Variables::Lcd.setCursor(0,1);
+            Variables::Lcd.print("Error");
+            Variables::Lcd.print(error);
         }
     }
 

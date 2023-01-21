@@ -44,6 +44,7 @@ class Conectado_datos:
         self.celdad_carga()
         self.cerrar_all()
         self.confi_regresion()
+        self.reiniciar()
 
     def ingrear_peso(self) -> None:
         boton = tkinter.Button(self.pantalla, text="Ing. Peso", command= lambda: self.__desactivar("peso"))
@@ -66,6 +67,7 @@ class Conectado_datos:
             self.caja.insert(tkinter.END, "Datos cargados desde el arduino")
         else:
             self.caja.insert(tkinter.END, "Datos Recuperados")
+        self.dispositivo.limpiar()
         self.pantalla.after(1400, self.__data_arduino)
     
     def __data_arduino(self) -> None:
@@ -166,6 +168,7 @@ class Conectado_datos:
             boton.config(text = "Celdad Carga")
             self.dispositivo.escribir_datos("ttttt")
             boton.place(relx=0.835, rely=0.55)
+            self.Datos_Arduino_final = True
             self.__abilitar()
 
     def guardar(self) -> None:
@@ -336,6 +339,17 @@ class Conectado_datos:
         for key, value in self.dispositivo.Guardar.configuracion.items():
             self.caja.insert(tkinter.END, f"{key}: {value}")
         self.caja.insert(tkinter.END, f"tiempo de llenado: {self.dispositivo.Guardar.tiempo}")
+    
+    def reiniciar(self) -> None:
+        boton = tkinter.Button(self.pantalla, text = "Reiniciar",
+            background="indian red", command= lambda: self.__reset_all(), height=1)
+        boton.place(relx=0.03, rely=0.03)
+
+    def __reset_all(self) -> None:
+        self.caja.insert(tkinter.END, "Reiniciar.")
+        
+        
+
 
 
 

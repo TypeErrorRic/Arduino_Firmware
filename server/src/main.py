@@ -4,7 +4,7 @@ from Ventanas import Ventana
 from conectado_datos import Conectado_datos
 
 #Ventana principal:
-Window = Ventana("Configuracion")
+Window = Ventana("Monitor de Control del Tanque")
 
 def main():
     print("Inicializando el programa...")

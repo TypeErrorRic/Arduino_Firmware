@@ -25,7 +25,7 @@
 
 bool calibrar{true};
 
-void setup() 
+void setup()
 {
   Variables::Lcd.begin(16, 2);
   Serial.begin(Variables::VELOCIDAD_DATOS);
@@ -64,27 +64,18 @@ void setup()
       break;
     }
   }
-  /*
-  Manejo_datos::limpiar_data();
-  Manejo_datos::set_up();
-  float var{12.5};
-  Manejo_datos::guardar_peso_diario(var);
-  Manejo_datos::guardar_peso_diario(var);
-  Manejo_datos::guardar_peso_diario(var);
-  */
   Correr::setup();
   Correr::calibracion(calibrar);
+  Variables::Lcd.clear();
 }
 
-/**
- * @brief Bucle incial de ejecución.
- */
-void loop() 
+
+void loop()
 {
-  //Correr::loop();
-  Variables::Lcd.setCursor(0,0);
-  Variables::Lcd.print("Hola ricardo.");
+  Correr::loop();
 }
+
+
 
 /**
  * @note Para la comprobación de los calculos realizador por el programa <<Regresion_Cuadratica.h>
